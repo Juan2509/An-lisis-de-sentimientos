@@ -1,0 +1,165 @@
+{
+  "version": 1,
+  "aliens": [
+    {
+      "id": "a001",
+      "nombre": "Fuego",
+      "nombre_original": "Heatblast",
+      "serie_origen": "Ben 10 (serie original)",
+      "descripcion": "Controla el fuego y proyecta llamas.",
+      "imagen": null
+    },
+    {
+      "id": "a002",
+      "nombre": "Diamante",
+      "nombre_original": "Diamondhead",
+      "serie_origen": "Ben 10 (serie original)",
+      "descripcion": "Genera estructuras y proyectiles de cristal.",
+      "imagen": null
+    },
+    {
+      "id": "a003",
+      "nombre": "XLR8",
+      "nombre_original": "XLR8",
+      "serie_origen": "Ben 10 (serie original)",
+      "descripcion": "Se desplaza a gran velocidad.",
+      "imagen": null
+    },
+    {
+      "id": "a004",
+      "nombre": "Cuatro Brazos",
+      "nombre_original": "Four Arms",
+      "serie_origen": "Ben 10 (serie original)",
+      "descripcion": "Posee cuatro brazos y una gran fuerza física.",
+      "imagen": null
+    },
+    {
+      "id": "a005",
+      "nombre": "Materia Gris",
+      "nombre_original": "Grey Matter",
+      "serie_origen": "Ben 10 (serie original)",
+      "descripcion": "Su pequeño tamaño y gran inteligencia facilitan resolver problemas técnicos.",
+      "imagen": null
+    },
+    {
+      "id": "a006",
+      "nombre": "Fuego Pantanoso",
+      "nombre_original": "Swampfire",
+      "serie_origen": "Ben 10: Fuerza Alienígena",
+      "descripcion": "Combina capacidades vegetales con la generación de fuego.",
+      "imagen": null
+    },
+    {
+      "id": "a007",
+      "nombre": "Eco Eco",
+      "nombre_original": "Echo Echo",
+      "serie_origen": "Ben 10: Fuerza Alienígena",
+      "descripcion": "Crea duplicados de sí mismo y emite ataques sónicos.",
+      "imagen": null
+    },
+    {
+      "id": "a008",
+      "nombre": "Humungosaurio",
+      "nombre_original": "Humungousaur",
+      "serie_origen": "Ben 10: Fuerza Alienígena",
+      "descripcion": "Destaca por su fuerza física y capacidad de aumentar de tamaño.",
+      "imagen": null
+    },
+    {
+      "id": "a009",
+      "nombre": "Frío",
+      "nombre_original": "Big Chill",
+      "serie_origen": "Ben 10: Fuerza Alienígena",
+      "descripcion": "Puede volar, volverse intangible y emitir aliento congelante.",
+      "imagen": null
+    },
+    {
+      "id": "a010",
+      "nombre": "Mono Araña",
+      "nombre_original": "Spidermonkey",
+      "serie_origen": "Ben 10: Fuerza Alienígena",
+      "descripcion": "Combina agilidad para trepar con la producción de telarañas.",
+      "imagen": null
+    },
+    {
+      "id": "a011",
+      "nombre": "Amenaza Acuática",
+      "nombre_original": "Water Hazard",
+      "serie_origen": "Ben 10: Supremacía Alienígena",
+      "descripcion": "Lanza agua a presión y dispone de un cuerpo acorazado.",
+      "imagen": null
+    },
+    {
+      "id": "a012",
+      "nombre": "Ampfibio",
+      "nombre_original": "Ampfibian",
+      "serie_origen": "Ben 10: Supremacía Alienígena",
+      "descripcion": "Manipula electricidad mediante su cuerpo de aspecto similar a una medusa.",
+      "imagen": null
+    },
+    {
+      "id": "a013",
+      "nombre": "Armadillo",
+      "nombre_original": "Armodrillo",
+      "serie_origen": "Ben 10: Supremacía Alienígena",
+      "descripcion": "Sus brazos generan vibraciones y le permiten excavar.",
+      "imagen": null
+    },
+    {
+      "id": "a014",
+      "nombre": "Tortutornado",
+      "nombre_original": "Terraspin",
+      "serie_origen": "Ben 10: Supremacía Alienígena",
+      "descripcion": "Gira para generar fuertes corrientes de aire.",
+      "imagen": null
+    },
+    {
+      "id": "a015",
+      "nombre": "NRG",
+      "nombre_original": "NRG",
+      "serie_origen": "Ben 10: Supremacía Alienígena",
+      "descripcion": "Emite energía y calor; utiliza un traje de contención.",
+      "imagen": null
+    },
+    {
+      "id": "a016",
+      "nombre": "Feedback",
+      "nombre_original": "Feedback",
+      "serie_origen": "Ben 10: Omniverse",
+      "descripcion": "Absorbe energía y la devuelve mediante descargas.",
+      "imagen": null
+    },
+    {
+      "id": "a017",
+      "nombre": "Bloxx",
+      "nombre_original": "Bloxx",
+      "serie_origen": "Ben 10: Omniverse",
+      "descripcion": "Reorganiza los bloques de su cuerpo para cambiar de forma.",
+      "imagen": null
+    },
+    {
+      "id": "a018",
+      "nombre": "Gravattack",
+      "nombre_original": "Gravattack",
+      "serie_origen": "Ben 10: Omniverse",
+      "descripcion": "Manipula la gravedad para mover o suspender objetos.",
+      "imagen": null
+    },
+    {
+      "id": "a019",
+      "nombre": "Crashhopper",
+      "nombre_original": "Crashhopper",
+      "serie_origen": "Ben 10: Omniverse",
+      "descripcion": "Sus potentes patas le permiten realizar grandes saltos.",
+      "imagen": null
+    },
+    {
+      "id": "a020",
+      "nombre": "Escarabola",
+      "nombre_original": "Ball Weevil",
+      "serie_origen": "Ben 10: Omniverse",
+      "descripcion": "Produce bolas pegajosas de plasma que pueden explotar.",
+      "imagen": null
+    }
+  ]
+}

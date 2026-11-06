@@ -4,7 +4,7 @@ Proyecto académico de análisis de opiniones sobre aliens de **Ben 10**, adapta
 
 ## Estado
 
-Pasos 1 y 2 completados: alcance documentado, estructura inicial, entorno aislado y dependencias instaladas y verificadas. La interfaz y las funciones de la aplicación todavía están pendientes. Este README se ampliará al implementar cada etapa.
+Pasos 1 a 3 completados: alcance documentado, estructura inicial, entorno aislado, dependencias verificadas y catálogo de 20 aliens. La interfaz y las funciones de la aplicación todavía están pendientes. Este README se ampliará al implementar cada etapa.
 
 ## Objetivo y experiencia prevista
 
@@ -48,7 +48,7 @@ Para retomar en otro equipo, abrir el repositorio y compartir ambos documentos c
 
 ## Decisiones pendientes
 
-- Paso 3: lista de aliens, nombres localizados y series incluidas.
+- Catálogo definido: nombres latinos y cinco aliens de cada una de las cuatro series, sin versiones supremas. Ver [catálogo y fuentes](datos/README.md).
 - Paso 6: selección, procedencia y disponibilidad de imágenes.
 - Paso 8: modelo compatible, credenciales y evaluación real.
 - Paso 11: sistema operativo de entrega y mecanismo de inicio gráfico.
@@ -78,6 +78,10 @@ python3 -m venv .venv
 
 Estos comandos documentan la preparación técnica. El uso de la entrega será visual; el acceso gráfico se construirá en el paso 11. Ejecutar `app.py` ahora no ofrece una aplicación: los tres módulos contienen únicamente descripciones de su responsabilidad.
 
-`datos/` y `assets/aliens/` se conservan con `.gitkeep`. El catálogo y las opiniones JSON se crearán en sus etapas. `.env.example` tiene valores vacíos; al configurar el análisis se copiará a `.env` y se completará localmente. No se ha creado ninguna clave ni realizado llamadas al modelo.
+`datos/` y `assets/aliens/` se conservan con `.gitkeep`. El catálogo ya está en datos/aliens.json; las opiniones JSON se crearán en su etapa. `.env.example` tiene valores vacíos; al configurar el análisis se copiará a `.env` y se completará localmente. No se ha creado ninguna clave ni realizado llamadas al modelo.
 
 Verificación realizada: instalación de dependencias, `pip check` e importación de las cinco bibliotecas. Esto comprueba el entorno, no el funcionamiento de una aplicación ni una llamada de API. El aislamiento con venv sigue la [guía oficial de Streamlit](https://docs.streamlit.io/get-started/installation/command-line).
+
+## Catálogo (paso 3)
+
+Se añadieron 20 aliens con IDs estables, nombres latinos y alias originales. La selección incluye cinco de la serie original, cinco de Fuerza Alienígena, cinco de Supremacía Alienígena y cinco de Omniverse, sin versiones supremas. Las imágenes están pendientes y se representan con `null`. Ver [contrato de datos y fuentes](datos/README.md). La carga y validación desde la aplicación corresponden al paso 4.

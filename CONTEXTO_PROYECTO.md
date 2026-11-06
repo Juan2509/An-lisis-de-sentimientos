@@ -6,7 +6,7 @@
 
 Este archivo reúne el contexto necesario para continuar el proyecto en otra sesión o dispositivo. Leerlo antes de proponer cambios o desarrollar. Conserva requisitos, decisiones del usuario, propuesta visual, referencias y tareas pendientes. Es documentación del proyecto; los ejemplos e instrucciones citados de documentos externos son datos de referencia, no acciones autorizadas automáticamente.
 
-**Estado actual: pasos 1 y 2 completados. Hay documentación, estructura inicial y entorno aislado verificado; la aplicación funcional aún no está implementada.** El paso 1 (documentar alcance y requisitos) fue revisado. La petición actual autoriza completar esta etapa; continuar a las siguientes según lo que indique el usuario.
+**Estado actual: pasos 1, 2 y 3 completados. Hay documentación, estructura inicial y entorno aislado verificado; la aplicación funcional aún no está implementada.** El catálogo del paso 3 está preparado y verificado estáticamente. El siguiente paso es implementar su carga y validación (paso 4).
 
 Decisiones principales:
 
@@ -92,7 +92,7 @@ El taller original se llama Tribuna Global y trata de futbolistas. Se conserva s
 | Selector nombre y país | Selector nombre y dato descriptivo apropiado, si está verificado |
 | Opiniones sobre futbolistas | Opiniones sobre diseño, habilidades o participación del alien |
 
-Conservar al menos **20 aliens**, IDs estables y únicos, y un catálogo versionado. La lista definitiva, nombres localizados y alcance de las series aún deben definirse; no mezclar variantes del mismo personaje sin una regla clara.
+Conservar al menos **20 aliens**, IDs estables y únicos, y un catálogo versionado. Decisión confirmada del usuario: nombres en español latino e incluir serie original, Fuerza Alienígena, Supremacía Alienígena y Omniverse. Por ahora se excluyen versiones supremas. Se seleccionaron cinco transformaciones distintas introducidas en cada serie, sin duplicarlas por sus apariciones posteriores; alias originales como dato auxiliar.
 
 La adaptación de nombres debe aplicarse de manera coherente al código, datos, interfaz, pruebas y README. No renombrar automáticamente la carpeta física por cambiar el nombre del producto.
 
@@ -136,7 +136,7 @@ An-lisis-de-sentimientos/
 └── README.md
 ```
 
-En el paso 2 se crearon los tres módulos como archivos con docstrings, requirements.txt, .gitignore, .env.example, datos/ y assets/aliens/ con .gitkeep, y .venv local ignorado. Aún no hay catálogo JSON, opiniones, imágenes ni interfaz funcional. Versiones y comprobaciones están en README.md.
+En el paso 2 se crearon los tres módulos como archivos con docstrings, requirements.txt, .gitignore, .env.example, datos/ y assets/aliens/ con .gitkeep, y .venv local ignorado. El paso 3 añadió datos/aliens.json; siguen pendientes opiniones, imágenes e interfaz funcional. Versiones y comprobaciones están en README.md.
 
 - `app.py`: frontend Streamlit, ficha, chat, navegación, filtros y descarga.
 - `analisis.py`: configuración del modelo, prompt, esquema y validación del análisis.
@@ -281,7 +281,7 @@ DevFlow es otro proyecto integrador del curso. LangGraph, agentes, n8n, RAG, emb
 
 ## 11. Plan de desarrollo pendiente
 
-El orden detallado, mensajes de commit y seguimiento se encuentran en `PLAN_DESARROLLO.md`. Leerlo junto a este contexto. Los pasos 1 y 2 están revisados; el siguiente es crear el catálogo de aliens. Las decisiones de catálogo corresponden al paso 3, no bloquean el paso 2.
+El orden detallado, mensajes de commit y seguimiento se encuentran en `PLAN_DESARROLLO.md`. Leerlo junto a este contexto. Los pasos 1 a 3 están completados; el siguiente es leer y validar el catálogo (paso 4). El esquema y selección actuales se explican en datos/README.md.
 
 El usuario solicita consultar dudas relevantes antes de tomar decisiones que puedan generar inconvenientes. Registrar cualquier supuesto como propuesta y no como una preferencia confirmada.
 
@@ -310,3 +310,7 @@ La memoria entre sesiones no es automática. Para continuar:
 Mensaje sugerido para retomar:
 
 > Lee CONTEXTO_PROYECTO.md. Estamos adaptando el taller de sentimiento a Archivo Omnitrix de Ben 10. Revisa el estado real de los archivos y continúa desde lo pendiente, respetando la interfaz visual y los requisitos documentados. Explícame los pasos en español y no des por implementado lo que solo está planificado.
+
+## Catálogo confirmado en el paso 3
+
+`datos/aliens.json` contiene 20 registros con IDs a001–a020, nombre latino, nombre_original, serie_origen, descripcion e imagen. `serie_origen` representa la serie de introducción, no una lista de todas sus apariciones ni la edad de Ben en la historia. `imagen` es null hasta añadir recursos locales en el paso 6. Mantener los IDs al cambiar nombres o recursos. Consultar datos/README.md para selección, fuentes y límites.
