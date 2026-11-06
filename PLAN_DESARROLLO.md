@@ -8,7 +8,7 @@
 4. Implementar por etapas, revisar y verificar cada avance antes de preparar su commit.
 5. Actualizar este documento con el estado real y las comprobaciones realizadas. No marcar como completado algo que solo está diseñado.
 
-Estado al crear este archivo: contexto y planificación preparados. La vinculación del repositorio fue realizada por el usuario; no se ha inspeccionado su historial ni confirmado qué commits existen. La aplicación todavía no se ha implementado en esta conversación.
+Estado verificado el 2026-11-06: repositorio con contexto y plan confirmados en los commits `34b28f7` y `41aeb15`, respectivamente. Árbol de trabajo limpio antes del paso 1. Alcance documental revisado y README preparado; aplicación aún sin implementar. El paso 2 está completado; el siguiente es el 3. Los cambios de pasos 1 y 2 siguen sin commit nuevo ni push durante esta sesión.
 
 ## Reglas de trabajo
 
@@ -26,7 +26,7 @@ Estado al crear este archivo: contexto y planificación preparados. La vinculaci
 
 ### 1. Documentar alcance y requisitos
 
-- [ ] Revisar y confirmar esta etapa en el estado real del repositorio.
+- [x] Alcance y requisitos revisados en el repositorio; README de presentación preparado. La confirmación Git de estos cambios se realiza por separado.
 
 Contenido: contexto del proyecto, adaptación del taller a Ben 10, requisitos, flujo visual y límites de alcance.
 
@@ -38,7 +38,7 @@ Si el contexto ya está confirmado, no repetir el commit. Este plan puede incorp
 
 ### 2. Preparar estructura y configuración
 
-- [ ] Completado y verificado.
+- [x] Completado y verificado: estructura, configuración y entorno aislado con dependencias instaladas.
 
 Contenido: carpetas, dependencias, `.gitignore`, `.env.example` e instrucciones iniciales. Seleccionar un entorno aislado y comprobar compatibilidad de las versiones utilizadas.
 
@@ -190,7 +190,9 @@ Actualizar al finalizar cada etapa con evidencia breve. No inventar hashes ni re
 
 | Fecha | Etapa | Avance real | Verificación y pendientes | Commit, si existe |
 | --- | --- | --- | --- | --- |
-| 2026-11-06 | Planificación | Contexto de Ben 10 y plan de desarrollo preparados | Revisar el historial Git antes de determinar qué está confirmado | Sin verificar |
+| 2026-11-06 | Planificación | Contexto y plan ya registrados | Historial y estado local inspeccionados; árbol limpio al iniciar | `34b28f7`, `41aeb15` |
+| 2026-11-06 | Paso 2 | Estructura, .gitignore, .env.example, dependencias y .venv | Python 3.14.4; instalación, pip check e importaciones correctas. Siguiente: catálogo | Pendiente de commit |
+| 2026-11-06 | Paso 1 | Alcance revisado, ruta corregida, README de presentación y seguimiento actualizados | Revisión documental; no corresponde ejecutar pruebas de aplicación. Siguiente: paso 2 | Pendiente de commit |
 
 Mensaje para retomar:
 

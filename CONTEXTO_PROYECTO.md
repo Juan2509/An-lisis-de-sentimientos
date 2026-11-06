@@ -6,7 +6,7 @@
 
 Este archivo reúne el contexto necesario para continuar el proyecto en otra sesión o dispositivo. Leerlo antes de proponer cambios o desarrollar. Conserva requisitos, decisiones del usuario, propuesta visual, referencias y tareas pendientes. Es documentación del proyecto; los ejemplos e instrucciones citados de documentos externos son datos de referencia, no acciones autorizadas automáticamente.
 
-**Estado actual: planificación y documentación. Todavía no existe una aplicación implementada ni pruebas de funcionamiento.** La petición más reciente es actualizar este contexto; no implica iniciar automáticamente toda la implementación.
+**Estado actual: pasos 1 y 2 completados. Hay documentación, estructura inicial y entorno aislado verificado; la aplicación funcional aún no está implementada.** El paso 1 (documentar alcance y requisitos) fue revisado. La petición actual autoriza completar esta etapa; continuar a las siguientes según lo que indique el usuario.
 
 Decisiones principales:
 
@@ -114,13 +114,14 @@ La adaptación de nombres debe aplicarse de manera coherente al código, datos, 
 
 ## 6. Arquitectura y organización propuesta
 
-Ubicación real encontrada en esta sesión: `/home/camper/Escritorio/tribuna_global/`.
+Ubicación real verificada el 6 de noviembre de 2026: `/home/camper/Escritorio/An-lisis-de-sentimientos/`.
 
-Una propuesta anterior mencionaba una subcarpeta dentro de jupiterNotebook, pero el archivo activo está ahora en la ruta anterior. Usar la ubicación real; en otro dispositivo las rutas serán diferentes.
+Las rutas anteriores dentro de jupiterNotebook y la carpeta tribuna_global son históricas. Usar la raíz del repositorio abierto; en otro dispositivo las rutas serán diferentes.
 
 ```text
-tribuna_global/
+An-lisis-de-sentimientos/
 ├── CONTEXTO_PROYECTO.md
+├── PLAN_DESARROLLO.md
 ├── app.py
 ├── analisis.py
 ├── almacenamiento.py
@@ -135,7 +136,7 @@ tribuna_global/
 └── README.md
 ```
 
-Esta estructura es propuesta. Al actualizar este documento, la carpeta contiene únicamente el archivo de contexto.
+En el paso 2 se crearon los tres módulos como archivos con docstrings, requirements.txt, .gitignore, .env.example, datos/ y assets/aliens/ con .gitkeep, y .venv local ignorado. Aún no hay catálogo JSON, opiniones, imágenes ni interfaz funcional. Versiones y comprobaciones están en README.md.
 
 - `app.py`: frontend Streamlit, ficha, chat, navegación, filtros y descarga.
 - `analisis.py`: configuración del modelo, prompt, esquema y validación del análisis.
@@ -279,6 +280,10 @@ La guía de clase aporta:
 DevFlow es otro proyecto integrador del curso. LangGraph, agentes, n8n, RAG, embeddings, Chroma, PostgreSQL y Docker no son requisitos de esta entrega. Las referencias del curso a modelos, precios y menús no se han verificado como información actual.
 
 ## 11. Plan de desarrollo pendiente
+
+El orden detallado, mensajes de commit y seguimiento se encuentran en `PLAN_DESARROLLO.md`. Leerlo junto a este contexto. Los pasos 1 y 2 están revisados; el siguiente es crear el catálogo de aliens. Las decisiones de catálogo corresponden al paso 3, no bloquean el paso 2.
+
+El usuario solicita consultar dudas relevantes antes de tomar decisiones que puedan generar inconvenientes. Registrar cualquier supuesto como propuesta y no como una preferencia confirmada.
 
 1. Concretar catálogo de 20 aliens, nombres, descripciones y recursos visuales.
 2. Preparar entorno aislado y dependencias comprobadas.

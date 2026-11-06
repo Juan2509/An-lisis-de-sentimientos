@@ -1,0 +1,18 @@
+# Configuración privada
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+*.pem
+*.key
+# Entornos y cachés
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+# Archivos temporales y del sistema
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
