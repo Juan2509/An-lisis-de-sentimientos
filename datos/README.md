@@ -36,4 +36,14 @@ Son referencias comunitarias, no un catálogo oficial. Algunas páginas de Fando
 
 ## Verificación del paso 3
 
-Se comprobó el parseo del JSON, versión 1, 20 registros, IDs y nombres únicos, campos presentes y tipos básicos, cinco registros por serie, imágenes null y ausencia de nombres de formas supremas. Esta comprobación estática no implementa todavía el cargador ni su manejo de archivos inválidos: corresponden al paso 4.
+Se comprobó el parseo del JSON, versión 1, 20 registros, IDs y nombres únicos, campos presentes y tipos básicos, cinco registros por serie, imágenes null y ausencia de nombres de formas supremas.
+
+## Cargador implementado en el paso 4
+
+`almacenamiento.cargar_aliens()` devuelve la lista de registros del catálogo, sin cambiar sus datos. Valida versión entera 1, lista de al menos 20 aliens, campos obligatorios, textos no vacíos e IDs únicos sin espacios exteriores. Acepta campos adicionales para permitir ampliar las fichas; no comprueba la exactitud del contenido sobre la serie ni exige la distribución de cinco por serie, que corresponde a la selección editorial del paso 3.
+
+`imagen` admite `null` o una ruta local relativa a la raíz del proyecto, usando `/` y sin segmentos `..`. No admite URLs ni rutas absolutas de Linux o Windows. La existencia del recurso se comprobará al mostrar la ficha, con alternativa si falta la imagen.
+
+Las rutas relativas del archivo de catálogo también se resuelven desde la raíz del proyecto. Los errores de archivo ausente, lectura, codificación UTF-8, JSON o esquema se comunican mediante `ErrorCatalogo`, sin crear ni sobrescribir el archivo.
+
+Verificación: `python3 -m unittest discover -s tests -v`, desde la raíz del proyecto. Resultado del paso 4: 19 pruebas correctas con Python 3.10.12; sin dependencias externas ni llamadas al modelo. El fallo de permisos utiliza una simulación; los casos de archivo ausente, JSON dañado y codificación inválida usan archivos temporales reales.

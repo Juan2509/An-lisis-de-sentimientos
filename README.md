@@ -4,7 +4,7 @@ Proyecto académico de análisis de opiniones sobre aliens de **Ben 10**, adapta
 
 ## Estado
 
-Pasos 1 a 3 completados: alcance documentado, estructura inicial, entorno aislado, dependencias verificadas y catálogo de 20 aliens. La interfaz y las funciones de la aplicación todavía están pendientes. Este README se ampliará al implementar cada etapa.
+Pasos 1 a 4 completados: alcance documentado, estructura inicial, catálogo de 20 aliens y cargador con validación y pruebas automatizadas. El entorno y las dependencias se verificaron en el equipo anterior; esta copia aún no tiene `.venv`. La interfaz, el análisis y la persistencia de opiniones siguen pendientes. El siguiente paso es crear la navegación y selección visual (paso 5).
 
 ## Objetivo y experiencia prevista
 
@@ -29,7 +29,7 @@ La IA analizará solo la opinión actual. Los comentarios ajenos no se guardará
 
 Python y Streamlit para lógica e interfaz; LangChain para la clasificación; Pydantic para validar resultados; JSON para almacenamiento local de un único escritor. Las credenciales se configurarán fuera del código y del repositorio.
 
-Los módulos previstos son `app.py`, `analisis.py` y `almacenamiento.py`, acompañados por `datos/aliens.json`, `datos/opiniones.json` y recursos en `assets/aliens/`. Aún no están implementados.
+Los módulos son `app.py`, `analisis.py` y `almacenamiento.py`. Este último ya carga y valida `datos/aliens.json`; la interfaz y el análisis siguen como archivos con descripciones. `datos/opiniones.json` y los recursos de `assets/aliens/` se incorporarán en sus etapas.
 
 La base no incluye combate, mecánicas de videojuego, un chatbot general, cuentas de usuario, escritura concurrente, RAG ni agentes. Galerías avanzadas, gráficos y animaciones son ampliaciones opcionales.
 
@@ -53,11 +53,11 @@ Para retomar en otro equipo, abrir el repositorio y compartir ambos documentos c
 - Paso 8: modelo compatible, credenciales y evaluación real.
 - Paso 11: sistema operativo de entrega y mecanismo de inicio gráfico.
 
-Estas decisiones no impiden preparar la estructura del proyecto en el paso 2. Si surge una duda que afecte al alcance o a las preferencias del usuario, consultarla antes de implementar lo que dependa de ella.
+Las imágenes y la configuración de IA pendientes no impiden continuar con la navegación y selección visual. Si surge una duda que afecte al alcance o a las preferencias del usuario, consultarla antes de implementar lo que dependa de ella.
 
 ## Entorno de desarrollo (paso 2)
 
-Comprobado en Linux con Python 3.14.4. Se creó `.venv` en la raíz y se fijaron las cinco dependencias directas en `requirements.txt`. Las dependencias transitivas son resueltas por pip; este archivo no es un bloqueo completo de todas ellas.
+En el equipo anterior se comprobó Linux con Python 3.14.4, se creó `.venv` en la raíz y se fijaron las cinco dependencias directas en `requirements.txt`. Las dependencias transitivas son resueltas por pip; este archivo no es un bloqueo completo de todas ellas. En esta copia se dispone de Python 3.10.12 y no existe `.venv`; no se ha repetido la instalación ni la comprobación de esas dependencias.
 
 | Dependencia | Versión verificada |
 | --- | --- |
@@ -76,12 +76,26 @@ python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 ```
 
-Estos comandos documentan la preparación técnica. El uso de la entrega será visual; el acceso gráfico se construirá en el paso 11. Ejecutar `app.py` ahora no ofrece una aplicación: los tres módulos contienen únicamente descripciones de su responsabilidad.
+Estos comandos documentan la preparación técnica. El uso de la entrega será visual; el acceso gráfico se construirá en el paso 11. Ejecutar `app.py` ahora no ofrece una aplicación: ese archivo todavía contiene únicamente una descripción de su responsabilidad.
 
 `datos/` y `assets/aliens/` se conservan con `.gitkeep`. El catálogo ya está en datos/aliens.json; las opiniones JSON se crearán en su etapa. `.env.example` tiene valores vacíos; al configurar el análisis se copiará a `.env` y se completará localmente. No se ha creado ninguna clave ni realizado llamadas al modelo.
 
-Verificación realizada: instalación de dependencias, `pip check` e importación de las cinco bibliotecas. Esto comprueba el entorno, no el funcionamiento de una aplicación ni una llamada de API. El aislamiento con venv sigue la [guía oficial de Streamlit](https://docs.streamlit.io/get-started/installation/command-line).
+Verificación realizada en el equipo anterior: instalación de dependencias, `pip check` e importación de las cinco bibliotecas. Esto comprueba aquel entorno, no el funcionamiento de una aplicación ni una llamada de API. El aislamiento con venv sigue la [guía oficial de Streamlit](https://docs.streamlit.io/get-started/installation/command-line).
 
 ## Catálogo (paso 3)
 
-Se añadieron 20 aliens con IDs estables, nombres latinos y alias originales. La selección incluye cinco de la serie original, cinco de Fuerza Alienígena, cinco de Supremacía Alienígena y cinco de Omniverse, sin versiones supremas. Las imágenes están pendientes y se representan con `null`. Ver [contrato de datos y fuentes](datos/README.md). La carga y validación desde la aplicación corresponden al paso 4.
+Se añadieron 20 aliens con IDs estables, nombres latinos y alias originales. La selección incluye cinco de la serie original, cinco de Fuerza Alienígena, cinco de Supremacía Alienígena y cinco de Omniverse, sin versiones supremas. Las imágenes están pendientes y se representan con `null`. Ver [contrato de datos y fuentes](datos/README.md).
+
+## Carga y validación del catálogo (paso 4)
+
+`almacenamiento.cargar_aliens()` devuelve la lista de aliens validada. Comprueba la versión entera 1, un mínimo de 20 registros, campos obligatorios, textos no vacíos, IDs únicos sin espacios exteriores e imágenes `null` o rutas locales relativas con `/` y sin `..`. No exige todavía que las imágenes existan. Las rutas relativas del catálogo parten de la raíz del proyecto, independientemente del directorio de inicio.
+
+Si falta el archivo, no puede leerse, no usa UTF-8, contiene JSON dañado o incumple el esquema, lanza `ErrorCatalogo` con un mensaje en español. La lectura no crea ni modifica archivos. La presentación de estos errores en pantalla se incorporará con la interfaz.
+
+Comprobación técnica, desde la raíz del repositorio y sin dependencias externas:
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+Resultado observado con Python 3.10.12: 19 pruebas correctas, incluyendo el catálogo real, los errores previstos, la conservación de archivos inválidos y las rutas desde otro directorio. El error de permisos se simula con `unittest.mock`. Estas pruebas no verifican todavía la interfaz ni la API.
