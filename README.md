@@ -4,7 +4,7 @@ Proyecto académico de análisis de opiniones sobre aliens de **Ben 10**, adapta
 
 ## Estado
 
-Pasos 1 a 5 completados: alcance documentado, estructura inicial, catálogo validado de 20 aliens e interfaz Streamlit con navegación y selector. Se reconstruyó `.venv` y se comprobaron las dependencias en este equipo. Las fichas con imágenes, el envío, el análisis y la persistencia de opiniones siguen pendientes. El siguiente paso es mostrar fichas e imágenes (paso 6).
+Pasos 1 a 6 completados: alcance documentado, estructura inicial, catálogo validado de 20 aliens e interfaz Streamlit con navegación, selector y fichas con imágenes locales. El entorno `.venv` y las dependencias están comprobados en este equipo. El envío, el análisis y la persistencia de opiniones siguen pendientes. El siguiente paso es capturar opiniones y mantener su historial visual (paso 7).
 
 ## Objetivo y experiencia prevista
 
@@ -29,7 +29,7 @@ La IA analizará solo la opinión actual. Los comentarios ajenos no se guardará
 
 Python y Streamlit para lógica e interfaz; LangChain para la clasificación; Pydantic para validar resultados; JSON para almacenamiento local de un único escritor. Las credenciales se configurarán fuera del código y del repositorio.
 
-Los módulos son `app.py`, `analisis.py` y `almacenamiento.py`. La interfaz ya permite navegar y seleccionar aliens, y almacenamiento carga y valida `datos/aliens.json`. El análisis sigue como archivo con descripción. El tema visual se configura en `.streamlit/config.toml` y la portada en `assets/estilos.css`. `datos/opiniones.json` y las imágenes de `assets/aliens/` se incorporarán en sus etapas.
+Los módulos son `app.py`, `analisis.py` y `almacenamiento.py`. La interfaz permite navegar, seleccionar aliens y ver sus fichas; almacenamiento carga y valida `datos/aliens.json`. El análisis sigue como archivo con descripción. El tema visual se configura en `.streamlit/config.toml` y los estilos en `assets/estilos.css`. Las imágenes y su procedencia están en `assets/aliens/`. `datos/opiniones.json` se incorporará en la etapa de persistencia.
 
 La base no incluye combate, mecánicas de videojuego, un chatbot general, cuentas de usuario, escritura concurrente, RAG ni agentes. Galerías avanzadas, gráficos y animaciones son ampliaciones opcionales.
 
@@ -49,11 +49,11 @@ Para retomar en otro equipo, abrir el repositorio y compartir ambos documentos c
 ## Decisiones pendientes
 
 - Catálogo definido: nombres latinos y cinco aliens de cada una de las cuatro series, sin versiones supremas. Ver [catálogo y fuentes](datos/README.md).
-- Paso 6: selección, procedencia y disponibilidad de imágenes.
+- Imágenes definidas: personajes de la serie con diseños de Omniverse, descargados localmente y con [procedencia documentada](assets/aliens/README.md).
 - Paso 8: modelo compatible, credenciales y evaluación real.
 - Paso 11: sistema operativo de entrega y mecanismo de inicio gráfico.
 
-La configuración de IA pendiente no impide continuar con las fichas e imágenes. Si surge una duda que afecte al alcance o a las preferencias del usuario, consultarla antes de implementar lo que dependa de ella.
+La configuración de IA pendiente no impide continuar con la captura de opiniones del paso 7. Si surge una duda que afecte al alcance o a las preferencias del usuario, consultarla antes de implementar lo que dependa de ella.
 
 ## Entorno de desarrollo (paso 2)
 
@@ -66,6 +66,7 @@ En el equipo anterior se comprobó Linux con Python 3.14.4. En esta copia se rec
 | langchain-openai | 1.7.4 | 1.7.4 |
 | python-dotenv | 1.2.4 | 1.2.4 |
 | pydantic | 2.14.3 | 2.14.3 |
+| pillow | 12.3.0 | No documentada como dependencia directa |
 
 En VS Code, abrir la paleta y elegir **Python: Select Interpreter**, seleccionando `.venv/bin/python` en Linux. En otro equipo se debe crear un entorno nuevo e instalar `requirements.txt`; no copiar `.venv`.
 
@@ -82,11 +83,11 @@ Estos comandos documentan la preparación técnica. El uso de la entrega será v
 
 `datos/` y `assets/aliens/` se conservan con `.gitkeep`. El catálogo ya está en datos/aliens.json; las opiniones JSON se crearán en su etapa. `.env.example` tiene valores vacíos; al configurar el análisis se copiará a `.env` y se completará localmente. No se ha creado ninguna clave ni realizado llamadas al modelo.
 
-Verificación realizada aquí: instalación de dependencias, `.venv/bin/python -m pip check` sin incompatibilidades e importación de las cinco bibliotecas. Se comprobaron también las pruebas del catálogo y de la interfaz; no se realizaron llamadas a la API. El aislamiento con venv sigue la [guía oficial de Streamlit](https://docs.streamlit.io/get-started/installation/command-line).
+Verificación realizada aquí: instalación de dependencias, `.venv/bin/python -m pip check` sin incompatibilidades e importación de las bibliotecas, incluido Pillow para las imágenes. Se comprobaron también las pruebas del catálogo y de la interfaz; no se realizaron llamadas al modelo. El aislamiento con venv sigue la [guía oficial de Streamlit](https://docs.streamlit.io/get-started/installation/command-line).
 
 ## Catálogo (paso 3)
 
-Se añadieron 20 aliens con IDs estables, nombres latinos y alias originales. La selección incluye cinco de la serie original, cinco de Fuerza Alienígena, cinco de Supremacía Alienígena y cinco de Omniverse, sin versiones supremas. Las imágenes están pendientes y se representan con `null`. Ver [contrato de datos y fuentes](datos/README.md).
+Se añadieron 20 aliens con IDs estables, nombres latinos y alias originales. La selección incluye cinco de la serie original, cinco de Fuerza Alienígena, cinco de Supremacía Alienígena y cinco de Omniverse, sin versiones supremas. En el paso 6 se completaron las rutas de las 20 imágenes locales, manteniendo los IDs y las series de introducción. `null` sigue siendo válido si falta una imagen. Ver [contrato de datos y fuentes](datos/README.md).
 
 ## Carga y validación del catálogo (paso 4)
 
@@ -104,9 +105,9 @@ Resultado observado con Python 3.10.12: 19 pruebas correctas, incluyendo el cat�
 
 ## Navegación y selección visual (paso 5)
 
-La interfaz tiene dos secciones: **Analizar opinión** permite seleccionar cualquiera de los 20 aliens y muestra el nombre y la serie de introducción; **Consultar archivo** informa que la consulta de opiniones sigue pendiente. La selección se conserva al cambiar de sección. No hay todavía envío de opiniones ni análisis o guardado.
+La interfaz tiene dos secciones: **Analizar opinión** permite seleccionar cualquiera de los 20 aliens y muestra su ficha; **Consultar archivo** informa que la consulta de opiniones sigue pendiente. La selección se conserva al cambiar de sección. No hay todavía envío de opiniones ni análisis o guardado.
 
-El tema nativo de Streamlit usa fondo oscuro, texto claro y acento verde. La portada tiene un emblema decorativo hecho con CSS y una distribución adaptable a pantallas pequeñas. No utiliza imágenes de aliens ni recursos remotos.
+El tema nativo de Streamlit usa fondo oscuro, texto claro y acento verde. La portada tiene un emblema decorativo hecho con CSS y una distribución adaptable a pantallas pequeñas. La presentación usa imágenes locales, sin descargar recursos durante su uso.
 
 Inicio técnico para desarrollo, desde la raíz del repositorio:
 
@@ -126,3 +127,13 @@ Pruebas completas, con las dependencias instaladas:
 Resultado del paso 5: 24 pruebas correctas (19 del catálogo y 5 de interfaz con `streamlit.testing.v1.AppTest`), sin incompatibilidades de dependencias. Se verificaron todos los aliens, conservación de selección y errores visibles. También se comprobó el servidor con HTTP 200 y se revisó la interfaz en Chrome sin ventana a 1440 y 390 píxeles, con navegación entre secciones. La compatibilidad de esta interfaz con Streamlit 1.67.0 no se volvió a ejecutar aquí.
 
 Referencias técnicas: [tema de Streamlit](https://docs.streamlit.io/develop/api-reference/configuration/config.toml) y [pruebas de aplicaciones](https://docs.streamlit.io/develop/api-reference/app-testing).
+
+## Fichas e imágenes locales (paso 6)
+
+Cada selección actualiza nombre latino, nombre original, serie de introducción, habilidades e imagen. Los textos se leen del catálogo; no se generan con IA. Los 20 PNG son diseños de Omniverse de los personajes de la continuidad clásica, según la preferencia confirmada del usuario. La ficha distingue el diseño mostrado de la serie en la que debutó el alien.
+
+Las imágenes proceden de la [galería comunitaria Ben 10 DB](https://ben10db.weebly.com/omniverse.html). Ver [créditos, correspondencia y límites](assets/aliens/README.md) y [manifiesto de fuentes](assets/aliens/fuentes.json), con URL exacta, fecha, dimensiones y hash de cada archivo. No se generaron imágenes con IA ni se modificaron los PNG descargados; algunas fuentes tienen resolución pequeña.
+
+`cargar_imagen_local` lee y comprueba las imágenes mediante Pillow. Si la ruta es `null`, el archivo falta, está dañado o no se puede leer, la ficha usa `assets/aliens/sin_imagen.svg` con la etiqueta «Imagen no disponible». Si tampoco puede leerse ese recurso, muestra un aviso de texto y conserva los datos y el selector. Las imágenes se ajustan visualmente conservando su proporción.
+
+Verificación del paso 6: 28 pruebas correctas, incluidos los 20 cambios de ficha e imagen, fallos de imagen y su alternativa, integridad y procedencia de los recursos y funcionamiento sin peticiones HTTP externas. `pip check` correcto. En Chrome se comprobó la carga del PNG desde el servidor local, HTTP 200 y navegación a 1440/390 píxeles sin desbordamiento horizontal. El envío, clasificación y guardado de opiniones corresponden a las siguientes etapas.

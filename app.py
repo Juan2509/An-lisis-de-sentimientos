@@ -1,8 +1,57 @@
-"""Navegación y selección visual de Archivo Omnitrix."""
+"""Navegación, selección y fichas de Archivo Omnitrix."""
 
 import streamlit as st
+from PIL import Image
 
 from almacenamiento import ErrorCatalogo, RAIZ_PROYECTO, cargar_aliens
+
+
+def cargar_imagen_local(ruta: str | None) -> Image.Image | None:
+    """Lee una imagen del proyecto; un recurso ausente o dañado admite alternativa."""
+    if ruta is None:
+        return None
+    try:
+        archivo = (RAIZ_PROYECTO / ruta).resolve()
+        if not archivo.is_relative_to(RAIZ_PROYECTO):
+            return None
+        with Image.open(archivo) as imagen:
+            imagen.load()
+            return imagen.copy()
+    except (OSError, ValueError, RuntimeError, Image.DecompressionBombError):
+        return None
+
+
+def mostrar_ficha(alien: dict):
+    """Presenta datos del catálogo e imagen local, sin consultar modelos ni la red."""
+    with st.container(border=True):
+        st.caption("ALIEN SELECCIONADO")
+        st.subheader(alien["nombre"])
+        columna_imagen, columna_datos = st.columns([1, 2], gap="large")
+        with columna_imagen:
+            with st.container(key="imagen_alien"):
+                imagen = cargar_imagen_local(alien["imagen"])
+                if imagen is not None:
+                    st.image(imagen, caption=f"Imagen de {alien['nombre']}", width="stretch")
+                    st.caption(
+                        "Diseño de Omniverse · "
+                        "[Fuente](https://ben10db.weebly.com/omniverse.html)"
+                    )
+                else:
+                    try:
+                        alternativa = (RAIZ_PROYECTO / "assets/aliens/sin_imagen.svg").read_text(
+                            encoding="utf-8"
+                        )
+                    except (OSError, UnicodeError):
+                        st.info("Imagen no disponible.")
+                    else:
+                        st.image(alternativa, caption="Imagen no disponible", width="stretch")
+        with columna_datos:
+            st.caption("SERIE DE INTRODUCCIÓN")
+            st.text(alien["serie_origen"])
+            st.caption("NOMBRE ORIGINAL")
+            st.text(alien["nombre_original"])
+            st.markdown("**Habilidades**")
+            st.write(alien["descripcion"])
 
 
 def conservar_seleccion():
@@ -25,7 +74,7 @@ def main():
             key="seccion",
         )
         st.divider()
-        st.caption("Versión en desarrollo · Catálogo y selección disponibles.")
+        st.caption("Versión en desarrollo · Catálogo y fichas disponibles.")
 
     st.title("Archivo Omnitrix")
     st.caption("Explora las transformaciones de Ben 10.")
@@ -79,15 +128,11 @@ def main():
     )
     alien = catalogo[alien_id]
 
-    with st.container(border=True):
-        st.caption("ALIEN SELECCIONADO")
-        st.subheader(alien["nombre"])
-        st.text(alien["serie_origen"])
+    mostrar_ficha(alien)
 
     st.info(
-        "Por ahora puedes explorar la selección del catálogo. "
-        "Las fichas con imágenes y el envío de opiniones estarán disponibles "
-        "en próximas etapas."
+        "Puedes explorar las fichas de los aliens. "
+        "El envío y análisis de opiniones estarán disponibles en próximas etapas."
     )
 
 

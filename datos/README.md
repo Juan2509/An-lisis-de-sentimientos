@@ -20,11 +20,11 @@ La raíz contiene `version: 1` y una lista `aliens`.
 | nombre_original | string | Alias original para identificación; puede coincidir con nombre |
 | serie_origen | string | Serie en que la transformación fue introducida al público |
 | descripcion | string | Resumen breve de habilidades, redactado para la ficha |
-| imagen | string o null | Ruta local relativa a la raíz del proyecto cuando exista; null mientras esté pendiente |
+| imagen | string o null | Ruta local relativa a la raíz del proyecto; null si no hay imagen |
 
 La serie de origen no indica todas las series donde aparece el alien. Por ejemplo, los recuerdos de Feedback en Omniverse no lo convierten en una transformación introducida en la serie original. Un rediseño posterior del mismo alien no constituye un registro nuevo. Las formas supremas y el reboot no forman parte de esta selección.
 
-No asignar rutas ficticias a imágenes inexistentes. La interfaz deberá admitir `null` con un recurso alternativo; las imágenes y su procedencia se resolverán en el paso 6. El catálogo no requiere llamadas al modelo.
+No asignar rutas ficticias a imágenes inexistentes. Desde el paso 6, los 20 registros apuntan a PNG locales en `assets/aliens/`. La interfaz admite `null` y archivos ausentes, dañados o ilegibles mediante un recurso alternativo local. Las imágenes muestran diseños de Omniverse; `serie_origen` sigue indicando el debut del alien. Ver [fuentes y créditos](../assets/aliens/README.md). El catálogo y las fichas no requieren llamadas al modelo.
 
 ## Referencias consultadas
 

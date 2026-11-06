@@ -1,8 +1,14 @@
 """Pruebas de interacción con el motor de pruebas de Streamlit."""
 
+from copy import deepcopy
+from hashlib import sha256
+import json
+from pathlib import Path
+import tempfile
 import unittest
 from unittest.mock import patch
 
+from PIL import Image
 from streamlit.testing.v1 import AppTest
 
 from almacenamiento import ErrorCatalogo, RAIZ_PROYECTO, cargar_aliens
@@ -32,6 +38,61 @@ class PruebasInterfaz(unittest.TestCase):
                 self.assertFalse(app.exception)
                 self.assertEqual(app.subheader[0].value, alien["nombre"])
                 self.assertEqual(app.text[0].value, alien["serie_origen"])
+                self.assertEqual(app.text[1].value, alien["nombre_original"])
+                self.assertIn(alien["descripcion"], [m.value for m in app.markdown])
+                self.assertEqual(
+                    app.get("image")[0].proto.imgs[0].caption,
+                    f"Imagen de {alien['nombre']}",
+                )
+
+    def test_imagen_ausente_o_danada_muestra_alternativa_y_permite_cambiar(self):
+        with tempfile.TemporaryDirectory(dir=RAIZ_PROYECTO) as carpeta:
+            danada = Path(carpeta) / "danada.png"
+            danada.write_bytes(b"archivo que no es una imagen")
+            for ruta in (None, "assets/aliens/no-existe.png", str(danada.relative_to(RAIZ_PROYECTO))):
+                with self.subTest(ruta=ruta):
+                    datos = deepcopy(cargar_aliens())
+                    datos[0]["imagen"] = ruta
+                    with patch("almacenamiento.cargar_aliens", return_value=datos):
+                        app = self.iniciar()
+                        imagen = app.get("image")[0].proto.imgs[0]
+                        self.assertEqual(imagen.caption, "Imagen no disponible")
+                        self.assertTrue(imagen.url.startswith("data:image/svg+xml;base64,"))
+                        self.assertIn(datos[0]["descripcion"], [m.value for m in app.markdown])
+                        app.selectbox[0].select("a002").run()
+                        self.assertFalse(app.exception)
+                        self.assertEqual(app.subheader[0].value, "Diamante")
+
+    def test_imagen_sin_permiso_no_bloquea_ficha(self):
+        with patch("PIL.Image.open", side_effect=PermissionError):
+            app = self.iniciar()
+        self.assertEqual(app.get("image")[0].proto.imgs[0].caption, "Imagen no disponible")
+        self.assertEqual(app.subheader[0].value, "Fuego")
+
+    def test_ficha_funciona_sin_red(self):
+        with patch("requests.sessions.Session.request", side_effect=AssertionError("Sin red")) as peticion:
+            app = self.iniciar()
+            app.selectbox[0].select("a020").run()
+            peticion.assert_not_called()
+        self.assertFalse(app.exception)
+        self.assertEqual(app.subheader[0].value, "Escarabola")
+
+    def test_recursos_del_catalogo_tienen_procedencia_y_archivos_validos(self):
+        fuentes = json.loads((RAIZ_PROYECTO / "assets/aliens/fuentes.json").read_text(encoding="utf-8"))
+        por_id = {fuente["id"]: fuente for fuente in fuentes["imagenes"]}
+        self.assertEqual(set(por_id), {alien["id"] for alien in cargar_aliens()})
+        for alien in cargar_aliens():
+            with self.subTest(alien=alien["id"]):
+                fuente = por_id[alien["id"]]
+                self.assertEqual(alien["imagen"], fuente["archivo_local"])
+                ruta = RAIZ_PROYECTO / alien["imagen"]
+                self.assertEqual(sha256(ruta.read_bytes()).hexdigest(), fuente["sha256"])
+                self.assertTrue(fuente["pagina"].startswith("https://"))
+                self.assertTrue(fuente["url"].startswith("https://"))
+                with Image.open(ruta) as imagen:
+                    self.assertEqual(imagen.format, "PNG")
+                    self.assertEqual(imagen.size, (fuente["ancho"], fuente["alto"]))
+                    imagen.verify()
 
     def test_navegar_conserva_el_alien_seleccionado(self):
         app = self.iniciar()

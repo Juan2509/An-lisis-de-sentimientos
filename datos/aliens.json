@@ -7,7 +7,7 @@
       "nombre_original": "Heatblast",
       "serie_origen": "Ben 10 (serie original)",
       "descripcion": "Controla el fuego y proyecta llamas.",
-      "imagen": null
+      "imagen": "assets/aliens/a001.png"
     },
     {
       "id": "a002",
@@ -15,7 +15,7 @@
       "nombre_original": "Diamondhead",
       "serie_origen": "Ben 10 (serie original)",
       "descripcion": "Genera estructuras y proyectiles de cristal.",
-      "imagen": null
+      "imagen": "assets/aliens/a002.png"
     },
     {
       "id": "a003",
@@ -23,7 +23,7 @@
       "nombre_original": "XLR8",
       "serie_origen": "Ben 10 (serie original)",
       "descripcion": "Se desplaza a gran velocidad.",
-      "imagen": null
+      "imagen": "assets/aliens/a003.png"
     },
     {
       "id": "a004",
@@ -31,7 +31,7 @@
       "nombre_original": "Four Arms",
       "serie_origen": "Ben 10 (serie original)",
       "descripcion": "Posee cuatro brazos y una gran fuerza física.",
-      "imagen": null
+      "imagen": "assets/aliens/a004.png"
     },
     {
       "id": "a005",
@@ -39,7 +39,7 @@
       "nombre_original": "Grey Matter",
       "serie_origen": "Ben 10 (serie original)",
       "descripcion": "Su pequeño tamaño y gran inteligencia facilitan resolver problemas técnicos.",
-      "imagen": null
+      "imagen": "assets/aliens/a005.png"
     },
     {
       "id": "a006",
@@ -47,7 +47,7 @@
       "nombre_original": "Swampfire",
       "serie_origen": "Ben 10: Fuerza Alienígena",
       "descripcion": "Combina capacidades vegetales con la generación de fuego.",
-      "imagen": null
+      "imagen": "assets/aliens/a006.png"
     },
     {
       "id": "a007",
@@ -55,7 +55,7 @@
       "nombre_original": "Echo Echo",
       "serie_origen": "Ben 10: Fuerza Alienígena",
       "descripcion": "Crea duplicados de sí mismo y emite ataques sónicos.",
-      "imagen": null
+      "imagen": "assets/aliens/a007.png"
     },
     {
       "id": "a008",
@@ -63,7 +63,7 @@
       "nombre_original": "Humungousaur",
       "serie_origen": "Ben 10: Fuerza Alienígena",
       "descripcion": "Destaca por su fuerza física y capacidad de aumentar de tamaño.",
-      "imagen": null
+      "imagen": "assets/aliens/a008.png"
     },
     {
       "id": "a009",
@@ -71,7 +71,7 @@
       "nombre_original": "Big Chill",
       "serie_origen": "Ben 10: Fuerza Alienígena",
       "descripcion": "Puede volar, volverse intangible y emitir aliento congelante.",
-      "imagen": null
+      "imagen": "assets/aliens/a009.png"
     },
     {
       "id": "a010",
@@ -79,7 +79,7 @@
       "nombre_original": "Spidermonkey",
       "serie_origen": "Ben 10: Fuerza Alienígena",
       "descripcion": "Combina agilidad para trepar con la producción de telarañas.",
-      "imagen": null
+      "imagen": "assets/aliens/a010.png"
     },
     {
       "id": "a011",
@@ -87,7 +87,7 @@
       "nombre_original": "Water Hazard",
       "serie_origen": "Ben 10: Supremacía Alienígena",
       "descripcion": "Lanza agua a presión y dispone de un cuerpo acorazado.",
-      "imagen": null
+      "imagen": "assets/aliens/a011.png"
     },
     {
       "id": "a012",
@@ -95,7 +95,7 @@
       "nombre_original": "Ampfibian",
       "serie_origen": "Ben 10: Supremacía Alienígena",
       "descripcion": "Manipula electricidad mediante su cuerpo de aspecto similar a una medusa.",
-      "imagen": null
+      "imagen": "assets/aliens/a012.png"
     },
     {
       "id": "a013",
@@ -103,7 +103,7 @@
       "nombre_original": "Armodrillo",
       "serie_origen": "Ben 10: Supremacía Alienígena",
       "descripcion": "Sus brazos generan vibraciones y le permiten excavar.",
-      "imagen": null
+      "imagen": "assets/aliens/a013.png"
     },
     {
       "id": "a014",
@@ -111,7 +111,7 @@
       "nombre_original": "Terraspin",
       "serie_origen": "Ben 10: Supremacía Alienígena",
       "descripcion": "Gira para generar fuertes corrientes de aire.",
-      "imagen": null
+      "imagen": "assets/aliens/a014.png"
     },
     {
       "id": "a015",
@@ -119,7 +119,7 @@
       "nombre_original": "NRG",
       "serie_origen": "Ben 10: Supremacía Alienígena",
       "descripcion": "Emite energía y calor; utiliza un traje de contención.",
-      "imagen": null
+      "imagen": "assets/aliens/a015.png"
     },
     {
       "id": "a016",
@@ -127,7 +127,7 @@
       "nombre_original": "Feedback",
       "serie_origen": "Ben 10: Omniverse",
       "descripcion": "Absorbe energía y la devuelve mediante descargas.",
-      "imagen": null
+      "imagen": "assets/aliens/a016.png"
     },
     {
       "id": "a017",
@@ -135,7 +135,7 @@
       "nombre_original": "Bloxx",
       "serie_origen": "Ben 10: Omniverse",
       "descripcion": "Reorganiza los bloques de su cuerpo para cambiar de forma.",
-      "imagen": null
+      "imagen": "assets/aliens/a017.png"
     },
     {
       "id": "a018",
@@ -143,7 +143,7 @@
       "nombre_original": "Gravattack",
       "serie_origen": "Ben 10: Omniverse",
       "descripcion": "Manipula la gravedad para mover o suspender objetos.",
-      "imagen": null
+      "imagen": "assets/aliens/a018.png"
     },
     {
       "id": "a019",
@@ -151,7 +151,7 @@
       "nombre_original": "Crashhopper",
       "serie_origen": "Ben 10: Omniverse",
       "descripcion": "Sus potentes patas le permiten realizar grandes saltos.",
-      "imagen": null
+      "imagen": "assets/aliens/a019.png"
     },
     {
       "id": "a020",
@@ -159,7 +159,7 @@
       "nombre_original": "Ball Weevil",
       "serie_origen": "Ben 10: Omniverse",
       "descripcion": "Produce bolas pegajosas de plasma que pueden explotar.",
-      "imagen": null
+      "imagen": "assets/aliens/a020.png"
     }
   ]
 }

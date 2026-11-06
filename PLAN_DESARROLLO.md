@@ -8,7 +8,7 @@
 4. Implementar por etapas, revisar y verificar cada avance antes de preparar su commit.
 5. Actualizar este documento con el estado real y las comprobaciones realizadas. No marcar como completado algo que solo está diseñado.
 
-Estado verificado el 2026-11-06: pasos 1 a 5 completados. Los pasos 1 y 2 están confirmados en `e3abb73`; el catálogo del paso 3, en `ed93656`; el cargador del paso 4, en `c39644f`. El paso 5 implementa navegación y selección visual y queda pendiente de commit. El siguiente es el paso 6: fichas e imágenes. No se ha hecho commit ni push durante esta sesión.
+Estado verificado el 2026-11-06: pasos 1 a 6 completados. Los pasos 1 y 2 están confirmados en `e3abb73`; el catálogo del paso 3, en `ed93656`; el cargador del paso 4, en `c39644f`; la navegación del paso 5, en `f297ae7`. El paso 6 incorpora fichas, 20 imágenes locales y alternativa ante fallos; queda pendiente de commit. El siguiente es el paso 7: captura de opiniones e historial visual. No se ha hecho commit ni push durante esta sesión.
 
 Entorno de esta copia: `.venv` reconstruido con Python 3.10.12, dependencias instaladas e importadas y `pip check` correcto. Se ajustó `requirements.txt`: Streamlit 1.65.0 para Python 3.10 y 1.67.0 para Python 3.11+. La verificación anterior con Python 3.14.4 corresponde al equipo previo; esta interfaz se comprobó aquí con Streamlit 1.65.0. No se hicieron llamadas a la IA.
 
@@ -83,11 +83,15 @@ Commit: `feat(ui): crear navegación y selector de aliens`
 
 ### 6. Mostrar fichas e imágenes
 
-- [ ] Completado y verificado.
+- [x] Completado y verificado: fichas con nombre, alias, serie y habilidades del catálogo; 20 PNG locales y SVG alternativo ante imágenes ausentes, dañadas o ilegibles.
 
 Contenido: imagen local, nombre y habilidades del alien seleccionado; recurso alternativo si falta una imagen. Definir y documentar origen de los recursos utilizados.
 
 Comprobar: la ficha cambia con la selección; la ausencia de una imagen no bloquea el flujo. La ficha usa datos revisados, sin llamadas al modelo.
+
+Preferencia confirmada: imágenes de los personajes de la serie. Se descargaron 20 diseños de Omniverse desde Ben 10 DB (Weebly), sin alterar los IDs ni la serie de introducción. La interfaz identifica el diseño mostrado. Procedencia y límites en `assets/aliens/README.md`; URLs, dimensiones y SHA-256 en `assets/aliens/fuentes.json`. Las imágenes no se descargan durante el uso de la aplicación.
+
+Verificación: 28 pruebas correctas (19 de catálogo y 9 de interfaz/recursos), `pip check` correcto y revisión visual de los 20 PNG. Incluye cambio de ficha, archivos ausentes/dañados, permisos simulados, fuentes y hashes, y funcionamiento sin peticiones HTTP externas. Servidor con HTTP 200, PNG servido desde /media local y revisión en Chrome a 1440/390 píxeles sin desbordamiento horizontal. Pillow se declara como dependencia directa porque se usa para leer las imágenes. Las opiniones siguen pendientes.
 
 Commit: `feat(ui): mostrar fichas e imágenes de los aliens`
 
@@ -196,7 +200,8 @@ Actualizar al finalizar cada etapa con evidencia breve. No inventar hashes ni re
 | Fecha | Etapa | Avance real | Verificación y pendientes | Commit, si existe |
 | --- | --- | --- | --- | --- |
 | 2026-11-06 | Planificación | Contexto y plan ya registrados | Historial y estado local inspeccionados; árbol limpio al iniciar | `34b28f7`, `41aeb15` |
-| 2026-11-06 | Paso 5 | Interfaz Streamlit con dos secciones, selector, tema y selección conservada; entorno local reconstruido | 24 pruebas correctas con `.venv/bin/python -m unittest discover -s tests -v`; `pip check` correcto, HTTP 200 y Chrome a 1440/390 px. Siguiente: paso 6 | Pendiente de commit |
+| 2026-11-06 | Paso 6 | Fichas del catálogo, 20 PNG locales con fuentes y alternativa SVG | 28 pruebas correctas; imágenes verificadas visualmente, hashes y dimensiones registrados, errores de imagen sin bloquear la ficha. Siguiente: paso 7 | Pendiente de commit |
+| 2026-11-06 | Paso 5 | Interfaz Streamlit con dos secciones, selector, tema y selección conservada; entorno local reconstruido | 24 pruebas correctas al cerrar la etapa; `pip check` correcto, HTTP 200 y Chrome a 1440/390 px | `f297ae7` |
 | 2026-11-06 | Paso 4 | Cargador UTF-8 con validación de versión, estructura, campos, IDs y rutas de imágenes | 19 pruebas correctas al cerrar la etapa. Incluye errores de lectura, archivos dañados conservados y carga desde otro directorio | `c39644f` |
 | 2026-11-06 | Paso 3 | Catálogo con nombres latinos, cuatro series y sin formas supremas | JSON válido, 20 registros únicos, cinco por serie; imágenes null | `ed93656` |
 | 2026-11-06 | Paso 2 | Estructura, .gitignore, .env.example, dependencias y .venv | Python 3.14.4; instalación, pip check e importaciones correctas. Siguiente: catálogo | `e3abb73` |

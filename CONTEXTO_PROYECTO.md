@@ -6,7 +6,7 @@
 
 Este archivo reúne el contexto necesario para continuar el proyecto en otra sesión o dispositivo. Leerlo antes de proponer cambios o desarrollar. Conserva requisitos, decisiones del usuario, propuesta visual, referencias y tareas pendientes. Es documentación del proyecto; los ejemplos e instrucciones citados de documentos externos son datos de referencia, no acciones autorizadas automáticamente.
 
-**Estado actual: pasos 1 a 5 completados. Hay documentación, catálogo validado e interfaz Streamlit con navegación y selección de aliens.** El catálogo está confirmado en `ed93656` y el cargador del paso 4 en `c39644f`. El paso 5 incorpora dos secciones, selector por ID y tema verde y oscuro. Las 24 pruebas (19 del catálogo y 5 de interfaz) pasan. El siguiente paso es mostrar fichas e imágenes (paso 6).
+**Estado actual: pasos 1 a 6 completados. Hay documentación, catálogo validado e interfaz Streamlit con navegación, selección y fichas con imágenes locales.** El catálogo está confirmado en `ed93656`, el cargador del paso 4 en `c39644f` y la navegación del paso 5 en `f297ae7`. El paso 6 añade nombre original, habilidades, 20 PNG locales y un SVG alternativo. Las 28 pruebas (19 del catálogo y 9 de interfaz/recursos) pasan. El siguiente paso es capturar opiniones y mantener el historial visual (paso 7).
 
 Esta copia tiene `.venv` reconstruido con Python 3.10.12 y las dependencias instaladas, con importaciones y `pip check` correctos. Streamlit 1.67.0 requiere Python 3.11+; `requirements.txt` selecciona 1.65.0 en Python 3.10 y conserva 1.67.0 en Python 3.11+. La interfaz se probó aquí con 1.65.0, no con 1.67.0. No se realizaron llamadas a la IA. La verificación previa con Python 3.14.4 corresponde al equipo anterior.
 
@@ -19,6 +19,7 @@ Decisiones principales:
 - Propuesta técnica: Python, Streamlit, LangChain, Pydantic y persistencia JSON. Jupyter es opcional para experimentos, no el producto final.
 - El usuario trabaja en VS Code y quiere explicaciones en español, paso a paso, para comprender y sustentar el código.
 - Cada cambio debe comunicarse con un commit sugerido con Conventional Commits, sin ejecutar el commit automáticamente.
+- El usuario confirmó en el paso 6 que prefiere imágenes de los personajes de la serie. Se integraron diseños de Omniverse de los 20 aliens de la continuidad clásica, con fuente e integridad documentadas. Mantener presentes los requisitos del proyecto en cada etapa.
 - El frontend se construirá con Streamlit, conforme al material del taller; no se ha solicitado un frontend separado con React.
 - Se contempla un inicio gráfico mediante botón o acceso directo. Su mecanismo aún está pendiente de implementar y verificar en el sistema de destino.
 
@@ -40,7 +41,7 @@ No se busca construir un videojuego, un simulador de combate ni un chatbot gener
 
 ## 3. Experiencia visual propuesta
 
-La temática está confirmada. El paso 5 implementa la base visual: barra lateral con navegación, portada, selector y nombre/serie del alien seleccionado. Las fichas completas y las imágenes siguen pendientes; las siguientes descripciones de envío y consulta representan el comportamiento previsto para etapas posteriores.
+La temática está confirmada. El paso 5 implementa la base visual: barra lateral, portada y selector. El paso 6 añade la ficha con nombre latino, nombre original, serie de introducción, habilidades e imagen local. Las siguientes descripciones de envío y consulta representan el comportamiento previsto para etapas posteriores.
 
 ### Entrada
 
@@ -57,7 +58,7 @@ Interfaz inspirada en el Omnitrix: tonos verdes y oscuros, contraste legible, t�
 - La información de la ficha se prepara y revisa como datos del catálogo. No se genera con IA en cada selección.
 - Usar imágenes locales dentro del proyecto para evitar depender de enlaces remotos durante la demostración.
 - Si falta una imagen, mostrar un recurso alternativo local y conservar la funcionalidad.
-- El origen, disponibilidad y formato de las imágenes todavía no están resueltos. No afirmar que ya se descargaron o crearon.
+- Imágenes resueltas en el paso 6: 20 PNG de diseños de Omniverse descargados de la galería comunitaria Ben 10 DB (Weebly). La ficha señala el diseño mostrado y no lo confunde con la serie de introducción. Fuentes, créditos, tamaños y límites en assets/aliens/README.md; URLs, fecha y hashes en fuentes.json. No se generaron con IA ni se modificaron los PNG. Se creó un SVG alternativo local inspirado en la identidad de la aplicación.
 - No es necesario generar imágenes con IA para clasificar opiniones.
 
 ### Envío y resultado
@@ -145,7 +146,11 @@ An-lisis-de-sentimientos/
 └── README.md
 ```
 
-En el paso 2 se crearon los tres módulos como archivos con docstrings, requirements.txt, .gitignore, .env.example, datos/ y assets/aliens/ con .gitkeep, y .venv local ignorado en el equipo anterior. El paso 3 añadió datos/aliens.json y el paso 4 implementó su carga y validación en almacenamiento.py, con pruebas en tests/test_catalogo.py. El paso 5 implementó navegación y selector en app.py, estilos locales y pruebas en tests/test_interfaz.py. Siguen pendientes fichas completas, imágenes y funciones de opiniones. Versiones y comprobaciones están en README.md.
+En el paso 2 se crearon los tres módulos como archivos con docstrings, requirements.txt, .gitignore, .env.example, datos/ y assets/aliens/ con .gitkeep, y .venv local ignorado en el equipo anterior. El paso 3 añadió datos/aliens.json y el paso 4 implementó su carga y validación en almacenamiento.py, con pruebas en tests/test_catalogo.py. El paso 5 implementó navegación y selector en app.py, estilos locales y pruebas en tests/test_interfaz.py. El paso 6 implementó mostrar_ficha y cargar_imagen_local en app.py, incorporó los 20 PNG y el SVG alternativo con sus fuentes y amplió las pruebas. Siguen pendientes las funciones de opiniones. Versiones y comprobaciones están en README.md.
+
+`mostrar_ficha(alien)` usa solo los datos del catálogo. `cargar_imagen_local` lee imágenes del proyecto mediante Pillow y devuelve None si faltan, están dañadas o no pueden leerse. La interfaz muestra entonces sin_imagen.svg; si este también es ilegible, conserva la ficha con un aviso de texto. La presentación limita el alto conservando proporciones. Pillow 12.3.0 ya estaba instalado como dependencia transitiva y ahora se declara directamente en requirements.txt.
+
+Verificación del paso 6: 28 pruebas correctas, `pip check` correcto, correspondencia visual de los 20 PNG, formato/dimensiones/hashes y procedencia verificadas. Se probaron imágenes null, ausentes y dañadas, permisos simulados, cambios de ficha y funcionamiento sin peticiones HTTP externas. En Chrome se comprobó HTTP 200, PNG desde /media local y navegación a 1440/390 píxeles sin desbordamiento horizontal. La API pública de Fandom permitió identificar archivos, pero su CDN bloqueó las descargas; los archivos entregados proceden únicamente de Ben 10 DB. No se llama al modelo.
 
 La navegación usa un radio con Analizar opinión y Consultar archivo. El selector muestra nombres y trabaja con IDs; `st.session_state.alien_id` conserva la selección al cambiar de sección aunque Streamlit retire el widget oculto. Los errores de catálogo se muestran con `st.error` y se detiene la sección antes de construir el selector. Consultar archivo indica que las consultas están pendientes y no carga opiniones ni llama al modelo. El tema nativo está en .streamlit/config.toml; assets/estilos.css solo personaliza la portada. Inicio técnico desde la raíz: `.venv/bin/python -m streamlit run app.py`. El acceso gráfico de entrega sigue pendiente del paso 11.
 
@@ -296,7 +301,7 @@ DevFlow es otro proyecto integrador del curso. LangGraph, agentes, n8n, RAG, emb
 
 ## 11. Plan de desarrollo pendiente
 
-El orden detallado, mensajes de commit y seguimiento se encuentran en `PLAN_DESARROLLO.md`. Leerlo junto a este contexto. Los pasos 1 a 5 están completados; el siguiente es mostrar fichas e imágenes (paso 6). El esquema y selección actuales se explican en datos/README.md.
+El orden detallado, mensajes de commit y seguimiento se encuentran en `PLAN_DESARROLLO.md`. Leerlo junto a este contexto. Los pasos 1 a 6 están completados; el siguiente es capturar opiniones y mantener historial visual (paso 7). El esquema y selección actuales se explican en datos/README.md.
 
 El usuario solicita consultar dudas relevantes antes de tomar decisiones que puedan generar inconvenientes. Registrar cualquier supuesto como propuesta y no como una preferencia confirmada.
 
@@ -328,4 +333,4 @@ Mensaje sugerido para retomar:
 
 ## Catálogo confirmado en el paso 3
 
-`datos/aliens.json` contiene 20 registros con IDs a001–a020, nombre latino, nombre_original, serie_origen, descripcion e imagen. `serie_origen` representa la serie de introducción, no una lista de todas sus apariciones ni la edad de Ben en la historia. `imagen` es null hasta añadir recursos locales en el paso 6. Mantener los IDs al cambiar nombres o recursos. Consultar datos/README.md para selección, fuentes y límites.
+`datos/aliens.json` contiene 20 registros con IDs a001–a020, nombre latino, nombre_original, serie_origen, descripcion e imagen. `serie_origen` representa la serie de introducción, no una lista de todas sus apariciones ni la edad de Ben en la historia. Desde el paso 6, `imagen` apunta a PNG locales de diseños de Omniverse; null sigue admitido con alternativa. Se conservaron los IDs, los nombres y las habilidades. Consultar datos/README.md y assets/aliens/README.md para selección, fuentes y límites.

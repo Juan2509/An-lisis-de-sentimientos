@@ -1,4 +1,9 @@
 /* Estilos propios; los controles usan el tema nativo de Streamlit. */
+.st-key-imagen_alien img {
+    max-height: 340px;
+    object-fit: contain;
+}
+
 .omnitrix-portada {
     display: flex;
     align-items: center;
