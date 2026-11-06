@@ -109,6 +109,10 @@ La interfaz tiene dos secciones: **Analizar opinión** permite seleccionar cualq
 
 El tema nativo de Streamlit usa fondo oscuro, texto claro y acento verde. La portada tiene un emblema decorativo hecho con CSS y una distribución adaptable a pantallas pequeñas. La presentación usa imágenes locales, sin descargar recursos durante su uso.
 
+La identidad visual se refinó por petición del usuario: negro predominante (`#050705`), verde neón (`#8CFF38`) y blanco para texto y detalles. La portada incluye degradado, cuadrícula y un núcleo Omnitrix con una órbita decorativa de movimiento lento. La navegación resalta la sección activa y las fichas enmarcan la imagen con iluminación verde. Los avisos informativos siguen la paleta; los errores conservan su color semántico. La animación se desactiva cuando el dispositivo solicita movimiento reducido. Todo se dibuja con CSS local.
+
+Verificación del rediseño: 28 pruebas existentes correctas y revisión en Chrome a 1440 y 390 píxeles, con navegación, imagen local, ausencia de desbordamiento horizontal y movimiento reducido comprobados. No se añadieron funciones de opiniones. Si Streamlit ya estaba ejecutándose al cambiar el tema, reiniciarlo y recargar el navegador para comprobar la nueva configuración.
+
 Inicio técnico para desarrollo, desde la raíz del repositorio:
 
 ```bash

@@ -20,6 +20,7 @@ Decisiones principales:
 - El usuario trabaja en VS Code y quiere explicaciones en español, paso a paso, para comprender y sustentar el código.
 - Cada cambio debe comunicarse con un commit sugerido con Conventional Commits, sin ejecutar el commit automáticamente.
 - El usuario confirmó en el paso 6 que prefiere imágenes de los personajes de la serie. Se integraron diseños de Omniverse de los 20 aliens de la continuidad clásica, con fuente e integridad documentadas. Mantener presentes los requisitos del proyecto en cada etapa.
+- Preferencia visual confirmada tras el paso 6: negro predominante, verde con efecto neón/degradado y blanco para texto y detalles necesarios, con apariencia futurista y creativa. Se implementó en el tema nativo y CSS local: portada con núcleo Omnitrix y cuadrícula, navegación resaltada y marco de imagen iluminado. La órbita decorativa respeta movimiento reducido. Se conservaron las funciones y los requisitos del taller.
 - El frontend se construirá con Streamlit, conforme al material del taller; no se ha solicitado un frontend separado con React.
 - Se contempla un inicio gráfico mediante botón o acceso directo. Su mecanismo aún está pendiente de implementar y verificar en el sistema de destino.
 

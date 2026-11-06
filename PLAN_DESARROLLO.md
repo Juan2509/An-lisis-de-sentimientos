@@ -8,7 +8,7 @@
 4. Implementar por etapas, revisar y verificar cada avance antes de preparar su commit.
 5. Actualizar este documento con el estado real y las comprobaciones realizadas. No marcar como completado algo que solo está diseñado.
 
-Estado verificado el 2026-11-06: pasos 1 a 6 completados. Los pasos 1 y 2 están confirmados en `e3abb73`; el catálogo del paso 3, en `ed93656`; el cargador del paso 4, en `c39644f`; la navegación del paso 5, en `f297ae7`. El paso 6 incorpora fichas, 20 imágenes locales y alternativa ante fallos; queda pendiente de commit. El siguiente es el paso 7: captura de opiniones e historial visual. No se ha hecho commit ni push durante esta sesión.
+Estado verificado el 2026-11-06: pasos 1 a 6 completados. Los pasos 1 y 2 están confirmados en `e3abb73`; el catálogo del paso 3, en `ed93656`; el cargador del paso 4, en `c39644f`; la navegación del paso 5, en `f297ae7`; las fichas e imágenes del paso 6, en `dc3da8c`. Después del paso 6 se realizó un refinamiento visual solicitado por el usuario: negro predominante, verde neón/degradado y blanco, con estética futurista. Este rediseño queda pendiente de commit. El siguiente es el paso 7: captura de opiniones e historial visual. No se ha hecho commit ni push durante esta sesión.
 
 Entorno de esta copia: `.venv` reconstruido con Python 3.10.12, dependencias instaladas e importadas y `pip check` correcto. Se ajustó `requirements.txt`: Streamlit 1.65.0 para Python 3.10 y 1.67.0 para Python 3.11+. La verificación anterior con Python 3.14.4 corresponde al equipo previo; esta interfaz se comprobó aquí con Streamlit 1.65.0. No se hicieron llamadas a la IA.
 
@@ -200,7 +200,8 @@ Actualizar al finalizar cada etapa con evidencia breve. No inventar hashes ni re
 | Fecha | Etapa | Avance real | Verificación y pendientes | Commit, si existe |
 | --- | --- | --- | --- | --- |
 | 2026-11-06 | Planificación | Contexto y plan ya registrados | Historial y estado local inspeccionados; árbol limpio al iniciar | `34b28f7`, `41aeb15` |
-| 2026-11-06 | Paso 6 | Fichas del catálogo, 20 PNG locales con fuentes y alternativa SVG | 28 pruebas correctas; imágenes verificadas visualmente, hashes y dimensiones registrados, errores de imagen sin bloquear la ficha. Siguiente: paso 7 | Pendiente de commit |
+| 2026-11-06 | Refinamiento visual solicitado | Negro predominante, verde neón/degradado y blanco; portada futurista, navegación resaltada y fichas iluminadas | 28 pruebas correctas; Chrome a 1440/390 px sin desbordamiento, navegación e imagen local comprobadas; movimiento reducido desactiva la órbita. Sigue pendiente el paso 7 | Pendiente de commit |
+| 2026-11-06 | Paso 6 | Fichas del catálogo, 20 PNG locales con fuentes y alternativa SVG | 28 pruebas correctas; imágenes verificadas visualmente, hashes y dimensiones registrados, errores de imagen sin bloquear la ficha | `dc3da8c` |
 | 2026-11-06 | Paso 5 | Interfaz Streamlit con dos secciones, selector, tema y selección conservada; entorno local reconstruido | 24 pruebas correctas al cerrar la etapa; `pip check` correcto, HTTP 200 y Chrome a 1440/390 px | `f297ae7` |
 | 2026-11-06 | Paso 4 | Cargador UTF-8 con validación de versión, estructura, campos, IDs y rutas de imágenes | 19 pruebas correctas al cerrar la etapa. Incluye errores de lectura, archivos dañados conservados y carga desde otro directorio | `c39644f` |
 | 2026-11-06 | Paso 3 | Catálogo con nombres latinos, cuatro series y sin formas supremas | JSON válido, 20 registros únicos, cinco por serie; imágenes null | `ed93656` |

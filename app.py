@@ -23,10 +23,10 @@ def cargar_imagen_local(ruta: str | None) -> Image.Image | None:
 
 def mostrar_ficha(alien: dict):
     """Presenta datos del catálogo e imagen local, sin consultar modelos ni la red."""
-    with st.container(border=True):
+    with st.container(border=True, key="ficha_alien"):
         st.caption("ALIEN SELECCIONADO")
         st.subheader(alien["nombre"])
-        columna_imagen, columna_datos = st.columns([1, 2], gap="large")
+        columna_imagen, columna_datos = st.columns([1, 1.4], gap="large")
         with columna_imagen:
             with st.container(key="imagen_alien"):
                 imagen = cargar_imagen_local(alien["imagen"])
@@ -45,7 +45,7 @@ def mostrar_ficha(alien: dict):
                         st.info("Imagen no disponible.")
                     else:
                         st.image(alternativa, caption="Imagen no disponible", width="stretch")
-        with columna_datos:
+        with columna_datos, st.container(key="datos_alien"):
             st.caption("SERIE DE INTRODUCCIÓN")
             st.text(alien["serie_origen"])
             st.caption("NOMBRE ORIGINAL")
@@ -65,8 +65,12 @@ def main():
     st.markdown(f"<style>{estilos}</style>", unsafe_allow_html=True)
 
     with st.sidebar:
-        st.markdown("### ARCHIVO :green[OMNITRIX]")
-        st.caption("Un universo de transformaciones.")
+        st.markdown(
+            '<div class="omnitrix-marca"><span aria-hidden="true">⌬</span>'
+            '<div>ARCHIVO<strong>OMNITRIX</strong></div></div>',
+            unsafe_allow_html=True,
+        )
+        st.caption("Tu conexión con el universo Ben 10.")
         st.divider()
         seccion = st.radio(
             "Secciones",
@@ -90,11 +94,16 @@ def main():
     st.markdown(
         """
         <div class="omnitrix-portada">
-            <div class="omnitrix-emblema" aria-hidden="true"><span></span></div>
-            <div>
-                <p class="omnitrix-etiqueta">CATÁLOGO DE TRANSFORMACIONES</p>
-                <p class="omnitrix-lema">Cada transformación tiene una historia.</p>
-                <p class="omnitrix-invitacion">Elige cuál explorar.</p>
+            <div class="omnitrix-portada-texto">
+                <p class="omnitrix-etiqueta">EL ARCHIVO DE LAS TRANSFORMACIONES</p>
+                <p class="omnitrix-lema">El universo está<br><span>en tus manos.</span></p>
+                <p class="omnitrix-invitacion">Descubre sus habilidades. Encuentra tu transformación.</p>
+            </div>
+            <div class="omnitrix-nucleo" aria-hidden="true">
+                <div class="omnitrix-orbita"></div>
+                <div class="omnitrix-emblema"><span></span></div>
+                <span class="omnitrix-cruz omnitrix-cruz-superior">+</span>
+                <span class="omnitrix-cruz omnitrix-cruz-inferior">+</span>
             </div>
         </div>
         """,

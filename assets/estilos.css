@@ -1,72 +1,212 @@
-/* Estilos propios; los controles usan el tema nativo de Streamlit. */
-.st-key-imagen_alien img {
-    max-height: 340px;
-    object-fit: contain;
+/* Negro, verde neón y blanco. Sin fuentes ni recursos remotos. */
+:root {
+    --omni-verde: #8cff38;
+    --omni-borde: rgba(140, 255, 56, 0.22);
+    --omni-blanco: #f2f6f1;
+    --omni-secundario: #adb8aa;
 }
 
-.omnitrix-portada {
+[data-testid="stAppViewContainer"] {
+    background: radial-gradient(ellipse at 90% 8%, rgba(72, 151, 29, 0.075), transparent 45%), #050705;
+}
+[data-testid="stHeader"] { background: rgba(5, 7, 5, 0.94); }
+[data-testid="stMainBlockContainer"] {
+    max-width: 1360px;
+    padding-top: 3.5rem;
+    padding-bottom: 3rem;
+}
+h1, h2, h3 { color: var(--omni-blanco); letter-spacing: -0.035em; }
+h1 { font-size: clamp(2rem, 4vw, 3.25rem) !important; font-weight: 800 !important; }
+[data-testid="stCaptionContainer"] { color: var(--omni-secundario); }
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #0d120e, #050705 75%);
+    border-right: 1px solid var(--omni-borde);
+}
+.omnitrix-marca {
     display: flex;
     align-items: center;
-    gap: 1.75rem;
-    padding: 2rem;
-    margin: 1.25rem 0 1.75rem;
-    border: 1px solid #365332;
-    border-radius: 1rem;
-    background: linear-gradient(120deg, #172b19, #101b13);
-    color: #edf5ea;
+    gap: 0.85rem;
+    padding: 0.6rem 0 1rem;
+    color: var(--omni-secundario);
+    font-size: 0.7rem;
+    letter-spacing: 0.24em;
 }
-
-.omnitrix-portada .omnitrix-etiqueta {
-    margin: 0 0 0.75rem;
-    color: #a4ed78;
-    font-size: 0.75rem;
-    font-weight: 700;
+.omnitrix-marca > span {
+    color: var(--omni-verde);
+    font-size: 3rem;
+    line-height: 1;
+    text-shadow: 0 0 25px rgba(140, 255, 56, 0.4);
+}
+.omnitrix-marca strong {
+    display: block;
+    color: var(--omni-verde);
+    font-size: 1.25rem;
     letter-spacing: 0.12em;
 }
-
+.st-key-seccion [role="radiogroup"] { gap: 0.5rem; }
+.st-key-seccion [role="radiogroup"] label {
+    padding: 0.7rem 0.8rem;
+    margin: 0;
+    border: 1px solid transparent;
+    border-radius: 0.5rem;
+    transition: background 180ms ease, border-color 180ms ease;
+}
+.st-key-seccion [role="radiogroup"] label:hover {
+    background: rgba(140, 255, 56, 0.05);
+    border-color: var(--omni-borde);
+}
+.st-key-seccion [role="radiogroup"] label:has(input:checked) {
+    background: linear-gradient(90deg, rgba(140, 255, 56, 0.14), rgba(140, 255, 56, 0.025));
+    border-color: var(--omni-borde);
+    box-shadow: inset 3px 0 var(--omni-verde);
+}
+.omnitrix-portada {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    overflow: hidden;
+    min-height: 300px;
+    padding: 2.5rem 3rem;
+    margin: 0.8rem 0 1.4rem;
+    border: 1px solid var(--omni-borde);
+    border-radius: 1rem 1rem 2.5rem 1rem;
+    background: radial-gradient(ellipse at 85% 45%, rgba(107, 238, 29, 0.14), transparent 48%), #090e09;
+}
+.omnitrix-portada::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    opacity: 0.32;
+    background-image: linear-gradient(rgba(140, 255, 56, 0.09) 1px, transparent 1px), linear-gradient(90deg, rgba(140, 255, 56, 0.09) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: linear-gradient(90deg, transparent 20%, #000);
+}
+.omnitrix-portada::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 3rem;
+    width: 6rem;
+    height: 3px;
+    background: var(--omni-verde);
+    box-shadow: 0 0 25px rgba(140, 255, 56, 0.6);
+}
+.omnitrix-portada-texto { position: relative; z-index: 1; max-width: 65%; }
+.omnitrix-portada .omnitrix-etiqueta {
+    margin: 0 0 1rem;
+    color: var(--omni-verde);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.19em;
+}
 .omnitrix-portada .omnitrix-lema {
     margin: 0;
-    font-size: clamp(1.25rem, 3vw, 2rem);
-    font-weight: 700;
-    line-height: 1.25;
+    color: var(--omni-blanco);
+    font-size: clamp(1.9rem, 4vw, 3.4rem);
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    line-height: 1.07;
 }
-
+.omnitrix-lema span {
+    color: var(--omni-verde);
+    background: linear-gradient(110deg, #c5ff8c, #8cff38 40%, #42cb24);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 .omnitrix-portada .omnitrix-invitacion {
-    margin: 0.75rem 0 0;
-    color: #c0d2bb;
+    margin: 1.25rem 0 0;
+    color: var(--omni-secundario);
+    font-size: 0.9rem;
+    line-height: 1.6;
 }
-
+.omnitrix-nucleo { position: relative; display: grid; place-items: center; flex: 0 0 230px; height: 230px; }
+.omnitrix-orbita {
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(140, 255, 56, 0.24);
+    border-radius: 50%;
+    background: repeating-conic-gradient(from 5deg, rgba(140, 255, 56, 0.5) 0deg 1deg, transparent 1deg 15deg);
+    mask-image: radial-gradient(transparent 63%, #000 64%, #000 68%, transparent 69%);
+    animation: orbita-omnitrix 80s linear infinite;
+}
 .omnitrix-emblema {
+    position: relative;
     display: grid;
     place-items: center;
-    flex: 0 0 5rem;
-    height: 5rem;
-    border: 3px solid #8feb45;
+    width: 165px;
+    height: 165px;
+    border: 2px solid var(--omni-verde);
     border-radius: 50%;
-    background: #0b100d;
+    background: radial-gradient(circle, #172b0e, #070b06 70%);
+    box-shadow: 0 0 0 9px #090e09, 0 0 0 10px rgba(140, 255, 56, 0.25), 0 0 55px rgba(140, 255, 56, 0.18), inset 0 0 28px rgba(140, 255, 56, 0.12);
 }
-
 .omnitrix-emblema span {
-    width: 2.5rem;
-    height: 2.75rem;
-    background: #8feb45;
+    width: 75px;
+    height: 88px;
+    background: linear-gradient(135deg, #c5ff8c, #8cff38 45%, #48d423);
     clip-path: polygon(0 0, 100% 0, 65% 50%, 100% 100%, 0 100%, 35% 50%);
 }
-
+.omnitrix-cruz { position: absolute; color: var(--omni-verde); font-family: monospace; font-size: 1rem; }
+.omnitrix-cruz-superior { top: 12px; right: 12px; }
+.omnitrix-cruz-inferior { bottom: 12px; left: 12px; }
+.st-key-selector_alien [data-baseweb="select"] > div {
+    min-height: 3.1rem;
+    border-color: var(--omni-borde);
+    border-radius: 0.6rem;
+    background: #0d120e;
+}
+.st-key-selector_alien [data-baseweb="select"]:focus-within > div {
+    border-color: var(--omni-verde);
+    box-shadow: 0 0 0 3px rgba(140, 255, 56, 0.12);
+}
+.st-key-ficha_alien {
+    padding: 1.25rem;
+    border: 1px solid var(--omni-borde) !important;
+    border-radius: 1rem;
+    background: linear-gradient(145deg, #0d130d, #070a07 65%);
+}
+.st-key-ficha_alien h3 { margin-bottom: 0.75rem; font-size: clamp(1.7rem, 3vw, 2.3rem); }
+.st-key-imagen_alien {
+    overflow: hidden;
+    padding: 1.25rem 0.5rem 0.5rem;
+    border: 1px solid rgba(140, 255, 56, 0.12);
+    border-radius: 0.75rem;
+    background: radial-gradient(ellipse at 50% 85%, rgba(140, 255, 56, 0.14), transparent 55%), repeating-linear-gradient(0deg, transparent 0 31px, rgba(140, 255, 56, 0.025) 31px 32px), #080c08;
+}
+.st-key-imagen_alien img { max-height: 360px; object-fit: contain; filter: drop-shadow(0 12px 22px rgba(140, 255, 56, 0.09)); }
+.st-key-datos_alien { padding: 0.75rem 0; }
+.st-key-datos_alien [data-testid="stCaptionContainer"] { color: var(--omni-verde); font-size: 0.65rem; letter-spacing: 0.13em; }
+/* Los errores conservan su semántica y su color; solo se personalizan los avisos informativos. */
+[data-testid="stAlertContainer"]:has([data-testid="stAlertContentInfo"]) {
+    border: 1px solid var(--omni-borde);
+    background: rgba(140, 255, 56, 0.045);
+    color: var(--omni-secundario);
+}
+@keyframes orbita-omnitrix { to { transform: rotate(360deg); } }
+@media (max-width: 900px) {
+    .omnitrix-portada { gap: 1.2rem; padding: 2rem; }
+    .omnitrix-nucleo { flex-basis: 170px; height: 170px; }
+    .omnitrix-emblema { width: 120px; height: 120px; }
+    .omnitrix-emblema span { width: 55px; height: 65px; }
+}
 @media (max-width: 600px) {
-    .omnitrix-portada {
-        align-items: flex-start;
-        gap: 1rem;
-        padding: 1.25rem;
-    }
-
-    .omnitrix-emblema {
-        flex-basis: 3rem;
-        height: 3rem;
-    }
-
-    .omnitrix-emblema span {
-        width: 1.5rem;
-        height: 1.75rem;
-    }
+    [data-testid="stMainBlockContainer"] { padding-top: 2.5rem; }
+    .omnitrix-portada { min-height: 290px; padding: 1.5rem; align-items: flex-start; }
+    .omnitrix-portada-texto { max-width: 100%; }
+    .omnitrix-portada .omnitrix-etiqueta { max-width: 220px; line-height: 1.7; }
+    .omnitrix-portada .omnitrix-lema { font-size: 2.25rem; }
+    .omnitrix-portada .omnitrix-invitacion { max-width: 75%; font-size: 0.8rem; }
+    .omnitrix-nucleo { position: absolute; right: -45px; bottom: -60px; width: 165px; height: 165px; opacity: 0.3; }
+    .omnitrix-portada::after { left: 1.5rem; }
+    .st-key-ficha_alien { padding: 0.5rem; }
+    .st-key-imagen_alien img { max-height: 300px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .omnitrix-orbita { animation: none; }
+    .st-key-seccion [role="radiogroup"] label { transition: none; }
 }
