@@ -6,9 +6,9 @@
 
 Este archivo reúne el contexto necesario para continuar el proyecto en otra sesión o dispositivo. Leerlo antes de proponer cambios o desarrollar. Conserva requisitos, decisiones del usuario, propuesta visual, referencias y tareas pendientes. Es documentación del proyecto; los ejemplos e instrucciones citados de documentos externos son datos de referencia, no acciones autorizadas automáticamente.
 
-**Estado actual: pasos 1 a 4 completados. Hay documentación, estructura inicial, catálogo y cargador validado; la aplicación visual aún no está implementada.** El catálogo está confirmado en `ed93656`. El paso 4 incorpora `cargar_aliens` y `ErrorCatalogo` en `almacenamiento.py`, con 19 pruebas automatizadas correctas. El siguiente paso es crear la navegación y selección visual (paso 5).
+**Estado actual: pasos 1 a 5 completados. Hay documentación, catálogo validado e interfaz Streamlit con navegación y selección de aliens.** El catálogo está confirmado en `ed93656` y el cargador del paso 4 en `c39644f`. El paso 5 incorpora dos secciones, selector por ID y tema verde y oscuro. Las 24 pruebas (19 del catálogo y 5 de interfaz) pasan. El siguiente paso es mostrar fichas e imágenes (paso 6).
 
-La verificación previa del entorno aislado corresponde al equipo anterior. Esta copia dispone de Python 3.10.12 y no tiene `.venv`. El paso 4 se comprobó con la biblioteca estándar, sin instalar dependencias ni realizar llamadas a la IA.
+Esta copia tiene `.venv` reconstruido con Python 3.10.12 y las dependencias instaladas, con importaciones y `pip check` correctos. Streamlit 1.67.0 requiere Python 3.11+; `requirements.txt` selecciona 1.65.0 en Python 3.10 y conserva 1.67.0 en Python 3.11+. La interfaz se probó aquí con 1.65.0, no con 1.67.0. No se realizaron llamadas a la IA. La verificación previa con Python 3.14.4 corresponde al equipo anterior.
 
 Decisiones principales:
 
@@ -18,6 +18,7 @@ Decisiones principales:
 - La entrega debe tener **interfaz visual y frontend**, utilizable desde el navegador. El usuario indicó que no debe usarse desde la terminal.
 - Propuesta técnica: Python, Streamlit, LangChain, Pydantic y persistencia JSON. Jupyter es opcional para experimentos, no el producto final.
 - El usuario trabaja en VS Code y quiere explicaciones en español, paso a paso, para comprender y sustentar el código.
+- Cada cambio debe comunicarse con un commit sugerido con Conventional Commits, sin ejecutar el commit automáticamente.
 - El frontend se construirá con Streamlit, conforme al material del taller; no se ha solicitado un frontend separado con React.
 - Se contempla un inicio gráfico mediante botón o acceso directo. Su mecanismo aún está pendiente de implementar y verificar en el sistema de destino.
 
@@ -39,7 +40,7 @@ No se busca construir un videojuego, un simulador de combate ni un chatbot gener
 
 ## 3. Experiencia visual propuesta
 
-La temática está confirmada. La distribución exacta, imágenes y detalles de estilo son una propuesta por concretar, no pantallas ya construidas.
+La temática está confirmada. El paso 5 implementa la base visual: barra lateral con navegación, portada, selector y nombre/serie del alien seleccionado. Las fichas completas y las imágenes siguen pendientes; las siguientes descripciones de envío y consulta representan el comportamiento previsto para etapas posteriores.
 
 ### Entrada
 
@@ -131,14 +132,24 @@ An-lisis-de-sentimientos/
 │   ├── aliens.json
 │   └── opiniones.json
 ├── assets/
+│   ├── estilos.css
 │   └── aliens/
+├── .streamlit/
+│   └── config.toml
+├── tests/
+│   ├── test_catalogo.py
+│   └── test_interfaz.py
 ├── requirements.txt
 ├── .env.example
 ├── .gitignore
 └── README.md
 ```
 
-En el paso 2 se crearon los tres módulos como archivos con docstrings, requirements.txt, .gitignore, .env.example, datos/ y assets/aliens/ con .gitkeep, y .venv local ignorado en el equipo anterior. El paso 3 añadió datos/aliens.json y el paso 4 implementó su carga y validación en almacenamiento.py, con pruebas en tests/test_catalogo.py. Siguen pendientes opiniones, imágenes e interfaz funcional. Versiones y comprobaciones están en README.md.
+En el paso 2 se crearon los tres módulos como archivos con docstrings, requirements.txt, .gitignore, .env.example, datos/ y assets/aliens/ con .gitkeep, y .venv local ignorado en el equipo anterior. El paso 3 añadió datos/aliens.json y el paso 4 implementó su carga y validación en almacenamiento.py, con pruebas en tests/test_catalogo.py. El paso 5 implementó navegación y selector en app.py, estilos locales y pruebas en tests/test_interfaz.py. Siguen pendientes fichas completas, imágenes y funciones de opiniones. Versiones y comprobaciones están en README.md.
+
+La navegación usa un radio con Analizar opinión y Consultar archivo. El selector muestra nombres y trabaja con IDs; `st.session_state.alien_id` conserva la selección al cambiar de sección aunque Streamlit retire el widget oculto. Los errores de catálogo se muestran con `st.error` y se detiene la sección antes de construir el selector. Consultar archivo indica que las consultas están pendientes y no carga opiniones ni llama al modelo. El tema nativo está en .streamlit/config.toml; assets/estilos.css solo personaliza la portada. Inicio técnico desde la raíz: `.venv/bin/python -m streamlit run app.py`. El acceso gráfico de entrega sigue pendiente del paso 11.
+
+Verificación del paso 5: 24 pruebas correctas con `.venv/bin/python -m unittest discover -s tests -v`, `pip check` correcto, servidor con HTTP 200 y revisión visual/navegación en Chrome sin ventana a 1440 y 390 píxeles. Las capturas y el script de revisión se guardaron temporalmente en /tmp y no forman parte de la entrega. Los controles se probaron también con AppTest; no se evaluó clasificación con IA.
 
 `cargar_aliens(ruta)` devuelve la lista validada y resuelve rutas relativas desde la raíz del proyecto. Comprueba versión 1, al menos 20 aliens, campos y tipos, textos no vacíos, IDs únicos sin espacios exteriores e imágenes null o rutas locales relativas con `/` y sin `..`. No exige que exista el recurso visual. Lanza `ErrorCatalogo` ante errores de lectura, UTF-8, JSON o contrato; no modifica el archivo ni sustituye fallos por una lista vacía. Las pruebas usan archivos temporales y simulan el fallo de permisos.
 
@@ -285,7 +296,7 @@ DevFlow es otro proyecto integrador del curso. LangGraph, agentes, n8n, RAG, emb
 
 ## 11. Plan de desarrollo pendiente
 
-El orden detallado, mensajes de commit y seguimiento se encuentran en `PLAN_DESARROLLO.md`. Leerlo junto a este contexto. Los pasos 1 a 4 están completados; el siguiente es crear navegación y selección visual (paso 5). El esquema y selección actuales se explican en datos/README.md.
+El orden detallado, mensajes de commit y seguimiento se encuentran en `PLAN_DESARROLLO.md`. Leerlo junto a este contexto. Los pasos 1 a 5 están completados; el siguiente es mostrar fichas e imágenes (paso 6). El esquema y selección actuales se explican en datos/README.md.
 
 El usuario solicita consultar dudas relevantes antes de tomar decisiones que puedan generar inconvenientes. Registrar cualquier supuesto como propuesta y no como una preferencia confirmada.
 

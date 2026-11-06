@@ -8,9 +8,9 @@
 4. Implementar por etapas, revisar y verificar cada avance antes de preparar su commit.
 5. Actualizar este documento con el estado real y las comprobaciones realizadas. No marcar como completado algo que solo está diseñado.
 
-Estado verificado el 2026-11-06: pasos 1 a 4 completados. Los pasos 1 y 2 están confirmados en `e3abb73`; el catálogo del paso 3, en `ed93656`. El paso 4 implementa la carga y validación del catálogo y queda pendiente de commit. El siguiente es el paso 5: navegación y selección visual. La aplicación visual todavía no está implementada. No se ha hecho commit ni push durante esta sesión.
+Estado verificado el 2026-11-06: pasos 1 a 5 completados. Los pasos 1 y 2 están confirmados en `e3abb73`; el catálogo del paso 3, en `ed93656`; el cargador del paso 4, en `c39644f`. El paso 5 implementa navegación y selección visual y queda pendiente de commit. El siguiente es el paso 6: fichas e imágenes. No se ha hecho commit ni push durante esta sesión.
 
-Entorno de esta copia: Python 3.10.12, sin `.venv`. La verificación anterior de dependencias con Python 3.14.4 corresponde al equipo de desarrollo previo. El paso 4 utiliza únicamente la biblioteca estándar; las dependencias de la interfaz y la IA deberán instalarse y comprobarse en este equipo al retomar esas etapas.
+Entorno de esta copia: `.venv` reconstruido con Python 3.10.12, dependencias instaladas e importadas y `pip check` correcto. Se ajustó `requirements.txt`: Streamlit 1.65.0 para Python 3.10 y 1.67.0 para Python 3.11+. La verificación anterior con Python 3.14.4 corresponde al equipo previo; esta interfaz se comprobó aquí con Streamlit 1.65.0. No se hicieron llamadas a la IA.
 
 ## Reglas de trabajo
 
@@ -18,6 +18,7 @@ Entorno de esta copia: Python 3.10.12, sin `.venv`. La verificación anterior de
 - Base propuesta: Python, Streamlit, LangChain, Pydantic y archivos JSON.
 - Interacción desde navegador e inicio gráfico; no exigir comandos al usuario para utilizar la entrega.
 - Cada commit debe contener un cambio coherente y describir trabajo realmente realizado.
+- Incluir un commit sugerido con Conventional Commits al comunicar cada cambio, según la preferencia del usuario. Sugerirlo no implica ejecutarlo.
 - Revisar el diff y preparar solo los archivos relacionados; conservar cambios ajenos.
 - No subir `.env`, claves, entornos virtuales ni archivos temporales. `.env.example` contiene marcadores.
 - No afirmar que una prueba pasó si no se ejecutó. Distinguir comprobaciones locales de evaluaciones con el modelo real.
@@ -70,11 +71,13 @@ Commit: `feat(catalogo): validar y cargar las transformaciones`
 
 ### 5. Crear navegación y selección visual
 
-- [ ] Completado y verificado.
+- [x] Completado y verificado: navegación, selector de los 20 aliens, selección conservada entre secciones, tema verde y oscuro y errores de catálogo visibles.
 
 Contenido: interfaz Streamlit con identidad visual verde y oscura, secciones Analizar opinión y Consultar archivo, selector de alien.
 
 Comprobar: navegación y selección operativas; etiquetas legibles; las funciones pendientes no se presentan como implementadas.
+
+Verificación: 24 pruebas correctas (19 de catálogo y 5 con AppTest), importación de dependencias y `pip check` correcto. Servidor local con HTTP 200 y revisión en Chrome a 1440 y 390 píxeles, sin desbordamiento horizontal. La consulta indica su estado pendiente; no se implementaron todavía fichas con imágenes, envío, clasificación ni persistencia. Detalles de inicio técnico en README.md; el lanzador gráfico sigue en el paso 11.
 
 Commit: `feat(ui): crear navegación y selector de aliens`
 
@@ -193,7 +196,8 @@ Actualizar al finalizar cada etapa con evidencia breve. No inventar hashes ni re
 | Fecha | Etapa | Avance real | Verificación y pendientes | Commit, si existe |
 | --- | --- | --- | --- | --- |
 | 2026-11-06 | Planificación | Contexto y plan ya registrados | Historial y estado local inspeccionados; árbol limpio al iniciar | `34b28f7`, `41aeb15` |
-| 2026-11-06 | Paso 4 | Cargador UTF-8 con validación de versión, estructura, campos, IDs y rutas de imágenes | `python3 -m unittest discover -s tests -v`: 19 pruebas correctas. Incluye errores de lectura, archivos dañados conservados y carga desde otro directorio. Siguiente: paso 5 | Pendiente de commit |
+| 2026-11-06 | Paso 5 | Interfaz Streamlit con dos secciones, selector, tema y selección conservada; entorno local reconstruido | 24 pruebas correctas con `.venv/bin/python -m unittest discover -s tests -v`; `pip check` correcto, HTTP 200 y Chrome a 1440/390 px. Siguiente: paso 6 | Pendiente de commit |
+| 2026-11-06 | Paso 4 | Cargador UTF-8 con validación de versión, estructura, campos, IDs y rutas de imágenes | 19 pruebas correctas al cerrar la etapa. Incluye errores de lectura, archivos dañados conservados y carga desde otro directorio | `c39644f` |
 | 2026-11-06 | Paso 3 | Catálogo con nombres latinos, cuatro series y sin formas supremas | JSON válido, 20 registros únicos, cinco por serie; imágenes null | `ed93656` |
 | 2026-11-06 | Paso 2 | Estructura, .gitignore, .env.example, dependencias y .venv | Python 3.14.4; instalación, pip check e importaciones correctas. Siguiente: catálogo | `e3abb73` |
 | 2026-11-06 | Paso 1 | Alcance revisado, ruta corregida, README de presentación y seguimiento actualizados | Revisión documental; no corresponde ejecutar pruebas de aplicación. Siguiente: paso 2 | `e3abb73` |

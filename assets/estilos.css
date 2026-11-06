@@ -1,0 +1,67 @@
+/* Estilos propios; los controles usan el tema nativo de Streamlit. */
+.omnitrix-portada {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+    padding: 2rem;
+    margin: 1.25rem 0 1.75rem;
+    border: 1px solid #365332;
+    border-radius: 1rem;
+    background: linear-gradient(120deg, #172b19, #101b13);
+    color: #edf5ea;
+}
+
+.omnitrix-portada .omnitrix-etiqueta {
+    margin: 0 0 0.75rem;
+    color: #a4ed78;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+}
+
+.omnitrix-portada .omnitrix-lema {
+    margin: 0;
+    font-size: clamp(1.25rem, 3vw, 2rem);
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.omnitrix-portada .omnitrix-invitacion {
+    margin: 0.75rem 0 0;
+    color: #c0d2bb;
+}
+
+.omnitrix-emblema {
+    display: grid;
+    place-items: center;
+    flex: 0 0 5rem;
+    height: 5rem;
+    border: 3px solid #8feb45;
+    border-radius: 50%;
+    background: #0b100d;
+}
+
+.omnitrix-emblema span {
+    width: 2.5rem;
+    height: 2.75rem;
+    background: #8feb45;
+    clip-path: polygon(0 0, 100% 0, 65% 50%, 100% 100%, 0 100%, 35% 50%);
+}
+
+@media (max-width: 600px) {
+    .omnitrix-portada {
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1.25rem;
+    }
+
+    .omnitrix-emblema {
+        flex-basis: 3rem;
+        height: 3rem;
+    }
+
+    .omnitrix-emblema span {
+        width: 1.5rem;
+        height: 1.75rem;
+    }
+}
