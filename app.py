@@ -4,6 +4,7 @@ import streamlit as st
 from PIL import Image
 
 from almacenamiento import ErrorCatalogo, RAIZ_PROYECTO, cargar_aliens
+from analisis import ErrorAnalisis, analizar_opinion
 
 
 def cargar_imagen_local(ruta: str | None) -> Image.Image | None:
@@ -65,7 +66,8 @@ def mostrar_opiniones(alien: dict):
     st.subheader("Comparte tu opinión")
     st.info(
         "Tus opiniones permanecen solo durante esta sesión. "
-        "El análisis con IA y el guardado estarán disponibles en próximas etapas."
+        "Cada envío se analiza de forma independiente con IA. "
+        "El guardado estará disponible en próximas etapas."
     )
     if st.button("Nueva conversación", key="nueva_conversacion"):
         historial.clear()
@@ -82,18 +84,37 @@ def mostrar_opiniones(alien: dict):
                 "alien_nombre": alien["nombre"], "texto": texto,
             }
         else:
-            historial.append({
+            opinion = {
                 "alien_id": alien["id"],
                 "alien_nombre": alien["nombre"],
                 "opinion_original": texto,
-            })
+            }
+            historial.append(opinion)
             st.session_state.pop("opinion_rechazada", None)
+            with st.spinner("Analizando la opinión…"):
+                try:
+                    opinion.update(analizar_opinion(dict(alien), texto))
+                except ErrorAnalisis as error:
+                    opinion["error_analisis"] = str(error)
 
     for opinion in historial:
         with st.chat_message("user"):
             st.caption(f"Opinión sobre {opinion['alien_nombre']}")
             st.text(opinion["opinion_original"])
-            st.caption("Pendiente de análisis · Sin guardar en el archivo")
+            st.caption("Sin guardar en el archivo")
+        if "error_analisis" in opinion:
+            st.error(opinion["error_analisis"])
+        elif "analisis" in opinion:
+            resultado = opinion["analisis"]
+            with st.chat_message("assistant"):
+                if resultado["es_pertinente"]:
+                    st.write(f"Sentimiento: {resultado['sentimiento']}")
+                    st.text(resultado["razon"])
+                else:
+                    st.warning("Opinión no pertinente. No se guardará en el archivo.")
+                    st.text(resultado["razon"])
+        else:
+            st.caption("Pendiente de análisis")
 
     rechazada = st.session_state.get("opinion_rechazada")
     if rechazada is not None:

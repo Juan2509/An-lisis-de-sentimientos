@@ -4,15 +4,27 @@ Proyecto académico de análisis de opiniones sobre aliens de **Ben 10**, adapta
 
 ## Estado
 
-Pasos 1 a 6 completados. El paso 7 está implementado y pendiente de verificación ejecutable en esta copia de Windows: captura de opiniones, validación e historial visual de sesión. Aquí no existe `.venv` ni se encontró Python en el PATH; las comprobaciones de entorno descritas más abajo corresponden al equipo anterior. El análisis y la persistencia siguen pendientes.
+Pasos 1 a 6 completados. Los pasos 7 y 8 están implementados y pendientes de verificación ejecutable en esta copia de Windows: captura de opiniones, historial de sesión y clasificación estructurada. Aquí no existe `.venv` ni se encontró Python en el PATH; las comprobaciones de entorno descritas más abajo corresponden al equipo anterior. La persistencia sigue pendiente.
 
 ## Opiniones de sesión (paso 7)
 
 Debajo de la ficha se puede enviar una opinión de 5 a 1000 caracteres, contando después de quitar espacios exteriores y sin recortar el texto. Cada envío conserva el texto original, ID y nombre del alien seleccionado. El historial permanece al cambiar de alien o sección; dos envíos iguales son independientes. Los textos rechazados quedan visibles para recuperarlos y corregirlos.
 
-«Nueva conversación» limpia el historial y el texto rechazado, conservando la selección. Los mensajes se muestran como pendientes de análisis y sin guardar: todavía no se llama a la IA ni se escribe `datos/opiniones.json`. El historial solo dura durante la sesión de Streamlit.
+«Nueva conversación» limpia el historial y el texto rechazado, conservando la selección. Desde el paso 8, los envíos válidos se analizan con IA cuando existe configuración; nunca se escribe todavía `datos/opiniones.json`. El historial solo dura durante la sesión de Streamlit.
 
 Se añadieron tres pruebas de interacción para estos flujos y se actualizó la prueba de inicio. `git diff --check` correcto; pruebas Python pendientes de ejecutar con las dependencias instaladas mediante `python -m unittest discover -s tests -v`.
+
+## Clasificación estructurada (paso 8)
+
+Preparación de desarrollo: copiar `.env.example` a `.env` y completar localmente `OPENAI_API_KEY` y `OPENAI_MODEL`. No pegar claves en el código, el chat o el repositorio. El modelo debe estar disponible en la cuenta y admitir Structured Outputs con `json_schema`. No se fija un modelo ni se supone que la cuenta tenga acceso. `OPENAI_TEMPERATURE=0` se usa si el modelo lo admite; dejar el valor vacío para omitir el parámetro. Las variables del sistema tienen prioridad sobre `.env`, que se lee desde la raíz del proyecto sin modificar el entorno global.
+
+`analisis.py` compone `ChatPromptTemplate | modelo.with_structured_output(...)` e invoca el resultado completo. Pydantic exige pertinencia booleana, una de las cuatro categorías o `null`, razón no vacía de hasta 300 caracteres y coherencia: solo las opiniones pertinentes llevan sentimiento. La longitud de la razón y la relación entre campos se comprueban localmente. El prompt `omnitrix-v1` contiene reglas de ironía y separación entre instrucciones y datos. El envío incluye únicamente datos del alien y texto actual, sin historial. La salida estructurada no garantiza que el juicio de sentimiento sea correcto.
+
+La interfaz muestra el resultado o el rechazo por falta de pertinencia. Ante configuración incompleta, fallo de API o resultado inválido, conserva el comentario y muestra un error sin inventar una categoría. Cada envío válido intenta una llamada, con espera máxima de 30 segundos y sin reintentos automáticos. Navegar no repite el análisis; reenviar es un envío independiente. Se conservan modelo y versión del prompt para la futura persistencia. Ningún resultado se guarda todavía en disco.
+
+Verificación del paso 8: cinco pruebas nuevas del contrato y la cadena, y dos nuevas de interfaz; las pruebas de chat usan dobles locales y nunca consumen API. No ejecutadas en esta copia por ausencia de Python y `.venv`. No se ha evaluado un modelo real ni confirmado acceso o credenciales. Antes de cerrar la etapa, ejecutar la suite y evaluar elogios, críticas, neutralidad, mixtos, ironía, texto ajeno e instrucciones embebidas con el modelo elegido.
+
+Referencias de implementación: [Structured Outputs de OpenAI](https://developers.openai.com/api/docs/guides/structured-outputs) y [salida estructurada de LangChain](https://reference.langchain.com/python/langchain-openai/chat_models/base/ChatOpenAI/with_structured_output).
 
 ## Objetivo y experiencia prevista
 
@@ -37,7 +49,7 @@ La IA analizará solo la opinión actual. Los comentarios ajenos no se guardará
 
 Python y Streamlit para lógica e interfaz; LangChain para la clasificación; Pydantic para validar resultados; JSON para almacenamiento local de un único escritor. Las credenciales se configurarán fuera del código y del repositorio.
 
-Los módulos son `app.py`, `analisis.py` y `almacenamiento.py`. La interfaz permite navegar, seleccionar aliens y ver sus fichas; almacenamiento carga y valida `datos/aliens.json`. El análisis sigue como archivo con descripción. El tema visual se configura en `.streamlit/config.toml` y los estilos en `assets/estilos.css`. Las imágenes y su procedencia están en `assets/aliens/`. `datos/opiniones.json` se incorporará en la etapa de persistencia.
+Los módulos son `app.py`, `analisis.py` y `almacenamiento.py`. La interfaz presenta catálogo, fichas y chat; análisis configura el modelo y valida resultados; almacenamiento carga y valida `datos/aliens.json`. El tema visual se configura en `.streamlit/config.toml` y los estilos en `assets/estilos.css`. Las imágenes y su procedencia están en `assets/aliens/`. `datos/opiniones.json` se incorporará en la etapa de persistencia.
 
 La base no incluye combate, mecánicas de videojuego, un chatbot general, cuentas de usuario, escritura concurrente, RAG ni agentes. Galerías avanzadas, gráficos y animaciones son ampliaciones opcionales.
 

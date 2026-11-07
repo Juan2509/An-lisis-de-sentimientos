@@ -12,9 +12,19 @@ from PIL import Image
 from streamlit.testing.v1 import AppTest
 
 from almacenamiento import ErrorCatalogo, RAIZ_PROYECTO, cargar_aliens
+from analisis import ErrorAnalisis
 
 
 class PruebasInterfaz(unittest.TestCase):
+    def setUp(self):
+        self.resultado = {
+            "analisis": {"es_pertinente": True, "sentimiento": "positivo", "razon": "Expresa agrado."},
+            "modelo": "modelo-de-prueba", "version_prompt": "prueba",
+        }
+        parche = patch("analisis.analizar_opinion", return_value=self.resultado)
+        self.analizar = parche.start()
+        self.addCleanup(parche.stop)
+
     def iniciar(self):
         app = AppTest.from_file(str(RAIZ_PROYECTO / "app.py"), default_timeout=15)
         app.run()
@@ -41,11 +51,16 @@ class PruebasInterfaz(unittest.TestCase):
         self.assertFalse(app.exception)
         historial = app.session_state["opiniones_sesion"]
         self.assertEqual(len(historial), 2)
-        self.assertEqual(historial[0], {
+        self.assertEqual({campo: historial[0][campo] for campo in (
+            "alien_id", "alien_nombre", "opinion_original",
+        )}, {
             "alien_id": "a001", "alien_nombre": "Fuego", "opinion_original": texto,
         })
         self.assertEqual(historial[1]["alien_id"], "a002")
-        self.assertEqual(len(app.chat_message), 2)
+        self.assertEqual(len(app.chat_message), 4)
+        self.assertEqual(self.analizar.call_count, 2)
+        self.assertEqual(self.analizar.call_args_list[0].args[0]["id"], "a001")
+        self.assertEqual(self.analizar.call_args_list[0].args[1], texto)
 
     def test_longitud_se_valida_sin_truncar_y_conserva_texto_rechazado(self):
         app = self.iniciar()
@@ -55,6 +70,7 @@ class PruebasInterfaz(unittest.TestCase):
                 self.assertFalse(app.exception)
                 self.assertTrue(app.error)
                 self.assertEqual(app.session_state["opiniones_sesion"], [])
+                self.analizar.assert_not_called()
                 self.assertIn(texto, [elemento.value for elemento in app.text])
         for texto in ("  abcde  ", "x" * 1000):
             app.chat_input[0].set_value(texto).run()
@@ -77,6 +93,29 @@ class PruebasInterfaz(unittest.TestCase):
         self.assertEqual(app.selectbox[0].value, "a003")
         self.assertEqual(app.session_state["opiniones_sesion"], [])
         self.assertEqual(ruta.read_bytes() if ruta.exists() else None, anterior)
+
+    def test_error_de_analisis_conserva_comentario_sin_reintento_al_navegar(self):
+        self.analizar.side_effect = ErrorAnalisis("No se pudo obtener un análisis válido.")
+        app = self.iniciar()
+        app.chat_input[0].set_value("Me gusta Fuego.").run()
+        app.selectbox[0].select("a002").run()
+        self.assertFalse(app.exception)
+        self.assertIn("análisis válido", app.error[0].value)
+        opinion = app.session_state["opiniones_sesion"][0]
+        self.assertEqual(opinion["opinion_original"], "Me gusta Fuego.")
+        self.assertNotIn("analisis", opinion)
+        self.assertEqual(self.analizar.call_count, 1)
+
+    def test_opinion_ajena_se_muestra_sin_categoria(self):
+        self.analizar.return_value = {
+            **self.resultado,
+            "analisis": {"es_pertinente": False, "sentimiento": None, "razon": "Habla del clima."},
+        }
+        app = self.iniciar()
+        app.chat_input[0].set_value("Hoy está lloviendo.").run()
+        self.assertFalse(app.exception)
+        self.assertIn("no pertinente", app.warning[0].value)
+        self.assertFalse(any("Sentimiento:" in m.value for m in app.markdown))
 
     def test_seleccion_de_todos_los_aliens(self):
         app = self.iniciar()

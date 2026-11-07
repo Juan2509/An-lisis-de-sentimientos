@@ -115,6 +115,8 @@ En esta etapa todavía no simular clasificación o confirmación de guardado. Pr
 
 - [ ] Completado y verificado.
 
+Implementado el 2026-11-07; pendiente de ejecutar pruebas y evaluación real. `analisis.py` define `AnalisisOpinion`, prompt `omnitrix-v1`, configuración local, cadena con salida `json_schema` y errores sanitizados. `app.py` analiza solo cada nuevo envío válido y conserva resultado o error en sesión, sin persistencia ni reintentos al navegar. Se añadieron cinco pruebas del análisis y dos de interfaz; las pruebas de chat usan dobles locales, sin API. `git diff --check` correcto. No hay Python en el PATH ni `.venv`; no se ha confirmado modelo/credenciales ni realizado llamadas reales. No cerrar esta casilla hasta verificar el entorno, la suite y los casos con el modelo elegido. Configuración en README y `.env.example`.
+
 Contenido: prompt system/human mediante `ChatPromptTemplate`, cadena LangChain, esquema Pydantic y `with_structured_output` con `invoke`. Configurar proveedor/modelo compatible mediante entorno.
 
 Comprobar: categorías positivo, negativo, neutro y mixto; razón de 1 a 300 caracteres; relación coherente entre pertinencia y categoría. Analizar únicamente alien y opinión actuales, sin historial. Tratar instrucciones dentro de comentarios como datos. Mensajes ajenos y fallos no se convierten en neutro.
@@ -201,6 +203,7 @@ Actualizar al finalizar cada etapa con evidencia breve. No inventar hashes ni re
 
 | Fecha | Etapa | Avance real | Verificación y pendientes | Commit, si existe |
 | --- | --- | --- | --- | --- |
+| 2026-11-07 | Paso 8 | Clasificación estructurada, pertinencia, resultados y errores visibles; metadatos en sesión | Pruebas locales añadidas sin ejecutar; evaluación con API y configuración pendientes; no persiste opiniones | Pendiente de commit |
 | 2026-11-07 | Paso 7 | Captura, validación, asociación al alien e historial temporal; limpieza del chat | Revisión del diff correcta; pruebas añadidas pero sin ejecutar por falta de Python y `.venv` en Windows | Pendiente de commit |
 | 2026-11-06 | Planificación | Contexto y plan ya registrados | Historial y estado local inspeccionados; árbol limpio al iniciar | `34b28f7`, `41aeb15` |
 | 2026-11-06 | Refinamiento visual solicitado | Negro predominante, verde neón/degradado y blanco; portada futurista, navegación resaltada y fichas iluminadas | 28 pruebas correctas; Chrome a 1440/390 px sin desbordamiento, navegación e imagen local comprobadas; movimiento reducido desactiva la órbita. Sigue pendiente el paso 7 | Pendiente de commit |
