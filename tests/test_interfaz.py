@@ -11,12 +11,18 @@ from unittest.mock import patch
 from PIL import Image
 from streamlit.testing.v1 import AppTest
 
-from almacenamiento import ErrorCatalogo, RAIZ_PROYECTO, cargar_aliens
+from almacenamiento import ErrorCatalogo, ErrorOpiniones, RAIZ_PROYECTO, cargar_aliens, cargar_opiniones
 from analisis import ErrorAnalisis
 
 
 class PruebasInterfaz(unittest.TestCase):
     def setUp(self):
+        temporal = tempfile.TemporaryDirectory()
+        self.addCleanup(temporal.cleanup)
+        self.ruta_opiniones = Path(temporal.name) / "opiniones.json"
+        parche_ruta = patch("almacenamiento.RUTA_OPINIONES", self.ruta_opiniones)
+        parche_ruta.start()
+        self.addCleanup(parche_ruta.stop)
         self.resultado = {
             "analisis": {"es_pertinente": True, "sentimiento": "positivo", "razon": "Expresa agrado."},
             "modelo": "modelo-de-prueba", "version_prompt": "prueba",
@@ -37,7 +43,7 @@ class PruebasInterfaz(unittest.TestCase):
         self.assertEqual(app.radio[0].value, "Analizar opinión")
         self.assertEqual(len(app.selectbox[0].options), 20)
         self.assertEqual(app.subheader[0].value, "Fuego")
-        self.assertIn("próximas etapas", app.info[0].value)
+        self.assertIn("archivo local", app.info[0].value)
         self.assertEqual(len(app.chat_input), 1)
 
     def test_opiniones_conservan_alien_texto_y_no_se_duplican_al_navegar(self):
@@ -79,11 +85,14 @@ class PruebasInterfaz(unittest.TestCase):
 
     def test_envios_identicos_independientes_y_limpieza_sin_escritura(self):
         app = self.iniciar()
-        ruta = RAIZ_PROYECTO / "datos/opiniones.json"
-        anterior = ruta.read_bytes() if ruta.exists() else None
+        ruta = self.ruta_opiniones
         for _ in range(2):
             app.chat_input[0].set_value("Me gusta su diseño.").run()
         self.assertEqual(len(app.session_state["opiniones_sesion"]), 2)
+        registros = cargar_opiniones(ruta)
+        self.assertEqual(len(registros), 2)
+        self.assertNotEqual(registros[0]["id"], registros[1]["id"])
+        anterior = ruta.read_bytes()
         app.selectbox[0].select("a003").run()
         app.chat_input[0].set_value("mal").run()
         app.button(key="nueva_conversacion").click().run()
@@ -105,6 +114,7 @@ class PruebasInterfaz(unittest.TestCase):
         self.assertEqual(opinion["opinion_original"], "Me gusta Fuego.")
         self.assertNotIn("analisis", opinion)
         self.assertEqual(self.analizar.call_count, 1)
+        self.assertFalse(self.ruta_opiniones.exists())
 
     def test_opinion_ajena_se_muestra_sin_categoria(self):
         self.analizar.return_value = {
@@ -116,6 +126,22 @@ class PruebasInterfaz(unittest.TestCase):
         self.assertFalse(app.exception)
         self.assertIn("no pertinente", app.warning[0].value)
         self.assertFalse(any("Sentimiento:" in m.value for m in app.markdown))
+        self.assertFalse(self.ruta_opiniones.exists())
+
+    def test_reintentar_guardado_conserva_id_y_no_repite_analisis(self):
+        app = self.iniciar()
+        with patch("almacenamiento.guardar_opinion", side_effect=ErrorOpiniones("Error de escritura")):
+            app.chat_input[0].set_value("Me encanta Fuego.").run()
+        self.assertFalse(app.exception)
+        self.assertFalse(app.success)
+        self.assertIn("Error de escritura", app.error[0].value)
+        registro = dict(app.session_state["opiniones_sesion"][0]["registro"])
+        app.selectbox[0].select("a002").run()
+        app.button(key=f"guardar_{registro['id']}").click().run()
+        self.assertFalse(app.error)
+        self.assertEqual(len(app.success), 1)
+        self.assertEqual(cargar_opiniones(self.ruta_opiniones), [registro])
+        self.assertEqual(self.analizar.call_count, 1)
 
     def test_seleccion_de_todos_los_aliens(self):
         app = self.iniciar()
@@ -187,7 +213,7 @@ class PruebasInterfaz(unittest.TestCase):
         app.radio[0].set_value("Consultar archivo").run()
         self.assertFalse(app.exception)
         self.assertEqual(app.header[0].value, "Consultar archivo")
-        self.assertIn("Todavía no se pueden guardar", app.info[0].value)
+        self.assertIn("los filtros y la descarga siguen pendientes", app.info[0].value)
         self.assertFalse(app.selectbox)
         app.radio[0].set_value("Analizar opinión").run()
         self.assertFalse(app.exception)

@@ -3,7 +3,10 @@
 import streamlit as st
 from PIL import Image
 
-from almacenamiento import ErrorCatalogo, RAIZ_PROYECTO, cargar_aliens
+from almacenamiento import (
+    ErrorCatalogo, ErrorOpiniones, RAIZ_PROYECTO, RUTA_OPINIONES,
+    cargar_aliens, crear_registro, guardar_opinion,
+)
 from analisis import ErrorAnalisis, analizar_opinion
 
 
@@ -60,14 +63,31 @@ def conservar_seleccion():
     st.session_state["alien_id"] = st.session_state["selector_alien"]
 
 
+def guardar_envio(opinion: dict):
+    """Conserva el mismo registro ante reintentos sin volver a analizar."""
+    try:
+        if "registro" not in opinion:
+            opinion["registro"] = crear_registro(
+                {"id": opinion["alien_id"], "nombre": opinion["alien_nombre"]},
+                opinion["opinion_original"], opinion["analisis"],
+                opinion["modelo"], opinion["version_prompt"],
+            )
+        guardar_opinion(RUTA_OPINIONES, opinion["registro"])
+    except ErrorOpiniones as error:
+        opinion["error_guardado"] = str(error)
+    else:
+        opinion["guardada"] = True
+        opinion.pop("error_guardado", None)
+
+
 def mostrar_opiniones(alien: dict):
-    """Captura opiniones independientes y conserva solo el historial de sesión."""
+    """Captura y analiza envíos; guarda los pertinentes y conserva el chat en sesión."""
     historial = st.session_state.setdefault("opiniones_sesion", [])
     st.subheader("Comparte tu opinión")
     st.info(
-        "Tus opiniones permanecen solo durante esta sesión. "
         "Cada envío se analiza de forma independiente con IA. "
-        "El guardado estará disponible en próximas etapas."
+        "Las opiniones pertinentes se guardan en el archivo local. "
+        "Nueva conversación limpia el chat y conserva el archivo."
     )
     if st.button("Nueva conversación", key="nueva_conversacion"):
         historial.clear()
@@ -96,12 +116,13 @@ def mostrar_opiniones(alien: dict):
                     opinion.update(analizar_opinion(dict(alien), texto))
                 except ErrorAnalisis as error:
                     opinion["error_analisis"] = str(error)
+            if opinion.get("analisis", {}).get("es_pertinente") is True:
+                guardar_envio(opinion)
 
     for opinion in historial:
         with st.chat_message("user"):
             st.caption(f"Opinión sobre {opinion['alien_nombre']}")
             st.text(opinion["opinion_original"])
-            st.caption("Sin guardar en el archivo")
         if "error_analisis" in opinion:
             st.error(opinion["error_analisis"])
         elif "analisis" in opinion:
@@ -115,6 +136,18 @@ def mostrar_opiniones(alien: dict):
                     st.text(resultado["razon"])
         else:
             st.caption("Pendiente de análisis")
+        if "error_guardado" in opinion:
+            registro = opinion.get("registro")
+            if registro is not None and st.button(
+                "Reintentar guardado", key=f"guardar_{registro['id']}",
+            ):
+                guardar_envio(opinion)
+        if opinion.get("guardada"):
+            st.success("Opinión guardada en el Archivo Omnitrix")
+        else:
+            st.caption("Sin guardar en el archivo")
+            if "error_guardado" in opinion:
+                st.error(opinion["error_guardado"])
 
     rechazada = st.session_state.get("opinion_rechazada")
     if rechazada is not None:
@@ -146,7 +179,7 @@ def main():
             key="seccion",
         )
         st.divider()
-        st.caption("Versión en desarrollo · Catálogo, fichas y opiniones de sesión.")
+        st.caption("Versión en desarrollo · Catálogo, fichas y análisis de opiniones.")
 
     st.title("Archivo Omnitrix")
     st.caption("Explora las transformaciones de Ben 10.")
@@ -155,7 +188,7 @@ def main():
         st.header("Consultar archivo")
         st.info(
             "La consulta de opiniones estará disponible en una próxima etapa. "
-            "Todavía no se pueden guardar, filtrar ni descargar opiniones."
+            "Las opiniones pertinentes ya se guardan; los filtros y la descarga siguen pendientes."
         )
         return
 

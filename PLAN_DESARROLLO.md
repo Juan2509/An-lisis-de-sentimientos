@@ -2,6 +2,8 @@
 
 ## Cómo retomar en una nueva sesión
 
+Estado más reciente (2026-11-07, Windows): pasos 7 a 9 implementados, pendientes de verificación ejecutable por ausencia de Python y `.venv`. El paso 9 añade persistencia y reintento de guardado sin repetir análisis. La consulta visual corresponde al paso 10. Las comprobaciones y estados del 2026-11-06 que aparecen más abajo son históricos; no equivalen a pruebas de estas nuevas etapas.
+
 1. Leer `CONTEXTO_PROYECTO.md` para conocer el alcance, la temática de Ben 10, las reglas del taller y las decisiones del usuario.
 2. Leer este plan y revisar los archivos, el historial Git y los cambios sin confirmar. El historial y el código determinan qué está terminado; las casillas son una ayuda.
 3. Identificar el primer paso pendiente y explicar en español qué se construirá y cómo se comprobará.
@@ -129,6 +131,8 @@ Registrar qué comprobaciones usaron un modelo real. Si faltan credenciales, doc
 
 - [ ] Completado y verificado.
 
+Implementado el 2026-11-07, pendiente de ejecución de pruebas y reinicio real. Archivo inicial `datos/opiniones.json`, creación de registros con UUID y fecha UTC, validación completa del archivo y escritura UTF-8 mediante temporal, sincronización y reemplazo. Idempotencia por ID con rechazo de conflictos. La interfaz guarda solo análisis pertinentes, confirma después del éxito y permite reintentar el mismo registro sin volver a analizar. Archivos dañados y errores de escritura no se ocultan ni se sobrescriben. Siete pruebas nuevas de almacenamiento y una de interfaz; pruebas de UI con ruta temporal aislada. `git diff --check` correcto; ninguna prueba Python ejecutada por falta de intérprete. No cerrar esta casilla hasta ejecutar la suite y demostrar persistencia tras reinicio. Alcance: un único escritor local.
+
 Contenido: `datos/opiniones.json`, UUID, fecha UTC, alien, texto original, análisis y metadatos del modelo/prompt. Escritura UTF-8 mediante temporal en el mismo directorio y reemplazo final.
 
 Comprobar: conserva registros tras reinicio, añade sin perder anteriores y evita duplicar el mismo envío. Conserva archivos dañados e informa errores. Confirma guardado únicamente tras escritura exitosa; mantiene la opinión visible ante fallos.
@@ -203,6 +207,7 @@ Actualizar al finalizar cada etapa con evidencia breve. No inventar hashes ni re
 
 | Fecha | Etapa | Avance real | Verificación y pendientes | Commit, si existe |
 | --- | --- | --- | --- | --- |
+| 2026-11-07 | Paso 9 | Registros persistentes, validación JSON, escritura atómica y reintento del mismo envío | Revisión del diff correcta; ocho pruebas añadidas sin ejecutar por falta de Python; reinicio real pendiente | Pendiente de commit |
 | 2026-11-07 | Paso 8 | Clasificación estructurada, pertinencia, resultados y errores visibles; metadatos en sesión | Pruebas locales añadidas sin ejecutar; evaluación con API y configuración pendientes; no persiste opiniones | Pendiente de commit |
 | 2026-11-07 | Paso 7 | Captura, validación, asociación al alien e historial temporal; limpieza del chat | Revisión del diff correcta; pruebas añadidas pero sin ejecutar por falta de Python y `.venv` en Windows | Pendiente de commit |
 | 2026-11-06 | Planificación | Contexto y plan ya registrados | Historial y estado local inspeccionados; árbol limpio al iniciar | `34b28f7`, `41aeb15` |

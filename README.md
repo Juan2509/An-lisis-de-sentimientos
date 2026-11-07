@@ -4,13 +4,13 @@ Proyecto académico de análisis de opiniones sobre aliens de **Ben 10**, adapta
 
 ## Estado
 
-Pasos 1 a 6 completados. Los pasos 7 y 8 están implementados y pendientes de verificación ejecutable en esta copia de Windows: captura de opiniones, historial de sesión y clasificación estructurada. Aquí no existe `.venv` ni se encontró Python en el PATH; las comprobaciones de entorno descritas más abajo corresponden al equipo anterior. La persistencia sigue pendiente.
+Pasos 1 a 6 completados. Los pasos 7, 8 y 9 están implementados y pendientes de verificación ejecutable en esta copia de Windows: captura, clasificación y persistencia de opiniones. Aquí no existe `.venv` ni se encontró Python en el PATH; las comprobaciones de entorno descritas más abajo corresponden al equipo anterior. La consulta visual, filtros y exportación corresponden al paso 10.
 
 ## Opiniones de sesión (paso 7)
 
 Debajo de la ficha se puede enviar una opinión de 5 a 1000 caracteres, contando después de quitar espacios exteriores y sin recortar el texto. Cada envío conserva el texto original, ID y nombre del alien seleccionado. El historial permanece al cambiar de alien o sección; dos envíos iguales son independientes. Los textos rechazados quedan visibles para recuperarlos y corregirlos.
 
-«Nueva conversación» limpia el historial y el texto rechazado, conservando la selección. Desde el paso 8, los envíos válidos se analizan con IA cuando existe configuración; nunca se escribe todavía `datos/opiniones.json`. El historial solo dura durante la sesión de Streamlit.
+«Nueva conversación» limpia el historial y el texto rechazado, conservando la selección y las opiniones guardadas en disco. Desde el paso 8, los envíos válidos se analizan con IA cuando existe configuración; desde el paso 9, los pertinentes se guardan en `datos/opiniones.json`. El chat solo dura durante la sesión de Streamlit.
 
 Se añadieron tres pruebas de interacción para estos flujos y se actualizó la prueba de inicio. `git diff --check` correcto; pruebas Python pendientes de ejecutar con las dependencias instaladas mediante `python -m unittest discover -s tests -v`.
 
@@ -20,11 +20,23 @@ Preparación de desarrollo: copiar `.env.example` a `.env` y completar localment
 
 `analisis.py` compone `ChatPromptTemplate | modelo.with_structured_output(...)` e invoca el resultado completo. Pydantic exige pertinencia booleana, una de las cuatro categorías o `null`, razón no vacía de hasta 300 caracteres y coherencia: solo las opiniones pertinentes llevan sentimiento. La longitud de la razón y la relación entre campos se comprueban localmente. El prompt `omnitrix-v1` contiene reglas de ironía y separación entre instrucciones y datos. El envío incluye únicamente datos del alien y texto actual, sin historial. La salida estructurada no garantiza que el juicio de sentimiento sea correcto.
 
-La interfaz muestra el resultado o el rechazo por falta de pertinencia. Ante configuración incompleta, fallo de API o resultado inválido, conserva el comentario y muestra un error sin inventar una categoría. Cada envío válido intenta una llamada, con espera máxima de 30 segundos y sin reintentos automáticos. Navegar no repite el análisis; reenviar es un envío independiente. Se conservan modelo y versión del prompt para la futura persistencia. Ningún resultado se guarda todavía en disco.
+La interfaz muestra el resultado o el rechazo por falta de pertinencia. Ante configuración incompleta, fallo de API o resultado inválido, conserva el comentario y muestra un error sin inventar una categoría. Cada envío válido intenta una llamada, con espera máxima de 30 segundos y sin reintentos automáticos. Navegar no repite el análisis; reenviar es un envío independiente. Se conservan modelo y versión del prompt en el registro persistente de las opiniones pertinentes.
 
 Verificación del paso 8: cinco pruebas nuevas del contrato y la cadena, y dos nuevas de interfaz; las pruebas de chat usan dobles locales y nunca consumen API. No ejecutadas en esta copia por ausencia de Python y `.venv`. No se ha evaluado un modelo real ni confirmado acceso o credenciales. Antes de cerrar la etapa, ejecutar la suite y evaluar elogios, críticas, neutralidad, mixtos, ironía, texto ajeno e instrucciones embebidas con el modelo elegido.
 
 Referencias de implementación: [Structured Outputs de OpenAI](https://developers.openai.com/api/docs/guides/structured-outputs) y [salida estructurada de LangChain](https://reference.langchain.com/python/langchain-openai/chat_models/base/ChatOpenAI/with_structured_output).
+
+## Persistencia local (paso 9)
+
+`almacenamiento.py` implementa `crear_registro`, `cargar_opiniones` y `guardar_opinion`. El archivo parte de `{"version": 1, "opiniones": []}`; cada registro guarda UUID, fecha UTC, ID/nombre del alien capturado, opinión original, sentimiento, razón, modelo y versión del prompt. La aplicación genera UUID y fecha; el modelo no controla la identidad del envío. Solo las opiniones pertinentes con análisis válido se guardan.
+
+Las rutas relativas parten del proyecto. Leer un archivo ausente devuelve una lista vacía sin crearlo; el primer guardado crea la estructura con su registro. Si existe, se valida versión, estructura, campos, UUID, fecha UTC, longitudes, categoría e IDs únicos antes de escribir. Los archivos ilegibles, dañados o con esquema inesperado se conservan y producen un error visible.
+
+La escritura UTF-8 mantiene los acentos y utiliza un temporal en el mismo directorio, `flush`, `fsync` y reemplazo final. Un fallo intenta limpiar el temporal y mantiene la opinión disponible en sesión. El alcance es un único escritor local: el reemplazo atómico no resuelve actualizaciones concurrentes.
+
+La interfaz confirma «Opinión guardada en el Archivo Omnitrix» solo después de un guardado exitoso o de comprobar que el mismo registro ya existe. Si falla, «Reintentar guardado» reutiliza UUID, fecha y análisis, sin consumir API. Un ID existente con datos distintos se rechaza; dos envíos independientes con el mismo texto conservan IDs distintos. Cambiar de alien o sección no dispara escrituras. Limpiar el chat no modifica el JSON. El historial no se reconstruye desde disco; la consulta visual se incorporará en el paso 10.
+
+Verificación: siete pruebas nuevas de almacenamiento con archivos temporales y una nueva de interfaz para fallo/reintento; las pruebas de interfaz aíslan la ruta para no modificar el archivo real. Cubren lectura posterior, duplicados, conflictos, JSON/UTF-8 inválidos, fallos de escritura y reemplazo, limpieza y rechazos. No ejecutadas por ausencia de Python y `.venv`. `git diff --check` correcto. Para comprobar solo la persistencia basta Python estándar: `python -m unittest discover -s tests -p test_opiniones.py -v`; la suite completa requiere instalar `requirements.txt`. La prueba de reinicio real de la aplicación sigue pendiente.
 
 ## Objetivo y experiencia prevista
 
@@ -49,7 +61,7 @@ La IA analizará solo la opinión actual. Los comentarios ajenos no se guardará
 
 Python y Streamlit para lógica e interfaz; LangChain para la clasificación; Pydantic para validar resultados; JSON para almacenamiento local de un único escritor. Las credenciales se configurarán fuera del código y del repositorio.
 
-Los módulos son `app.py`, `analisis.py` y `almacenamiento.py`. La interfaz presenta catálogo, fichas y chat; análisis configura el modelo y valida resultados; almacenamiento carga y valida `datos/aliens.json`. El tema visual se configura en `.streamlit/config.toml` y los estilos en `assets/estilos.css`. Las imágenes y su procedencia están en `assets/aliens/`. `datos/opiniones.json` se incorporará en la etapa de persistencia.
+Los módulos son `app.py`, `analisis.py` y `almacenamiento.py`. La interfaz presenta catálogo, fichas y chat; análisis configura el modelo y valida resultados; almacenamiento valida el catálogo y persiste opiniones en `datos/opiniones.json`. El tema visual se configura en `.streamlit/config.toml` y los estilos en `assets/estilos.css`. Las imágenes y su procedencia están en `assets/aliens/`.
 
 La base no incluye combate, mecánicas de videojuego, un chatbot general, cuentas de usuario, escritura concurrente, RAG ni agentes. Galerías avanzadas, gráficos y animaciones son ampliaciones opcionales.
 

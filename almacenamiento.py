@@ -1,14 +1,16 @@
-"""Lectura y validación del catálogo de Archivo Omnitrix.
-
-La persistencia y las consultas de opiniones se implementarán en otras etapas.
-"""
+"""Catálogo y persistencia JSON local para un único escritor."""
 
 import json
+import os
+import tempfile
+from datetime import datetime, timezone
 from pathlib import Path, PureWindowsPath
+from uuid import UUID, uuid4
 
 
 RAIZ_PROYECTO = Path(__file__).resolve().parent
 RUTA_CATALOGO = RAIZ_PROYECTO / "datos" / "aliens.json"
+RUTA_OPINIONES = RAIZ_PROYECTO / "datos" / "opiniones.json"
 CAMPOS_TEXTO = ("id", "nombre", "nombre_original", "serie_origen", "descripcion")
 
 
@@ -110,3 +112,118 @@ def cargar_aliens(ruta: str | Path = RUTA_CATALOGO) -> list[dict]:
         ) from error
 
     return _validar_catalogo(datos)
+
+
+class ErrorOpiniones(ValueError):
+    """El archivo de opiniones no se puede leer, validar o guardar."""
+
+
+def _validar_registro(registro: object) -> dict:
+    campos = {
+        "id", "fecha_utc", "alien_id", "alien_nombre", "opinion_original",
+        "sentimiento", "razon", "modelo", "version_prompt",
+    }
+    if not isinstance(registro, dict) or set(registro) != campos:
+        raise ErrorOpiniones("Un registro de opiniones contiene campos ausentes o inesperados.")
+    if any(not isinstance(valor, str) or not valor.strip() for valor in registro.values()):
+        raise ErrorOpiniones("Los campos del registro deben ser textos no vacíos.")
+    try:
+        if str(UUID(registro["id"])) != registro["id"]:
+            raise ValueError
+        fecha = datetime.fromisoformat(registro["fecha_utc"].replace("Z", "+00:00"))
+        if fecha.utcoffset() is None or fecha.utcoffset().total_seconds() != 0:
+            raise ValueError
+    except ValueError:
+        raise ErrorOpiniones("El registro debe tener un UUID válido y una fecha con zona UTC.") from None
+    if registro["alien_id"] != registro["alien_id"].strip():
+        raise ErrorOpiniones("El ID del alien no debe tener espacios exteriores.")
+    if not 5 <= len(registro["opinion_original"].strip()) <= 1000:
+        raise ErrorOpiniones("La opinión debe tener entre 5 y 1000 caracteres.")
+    if registro["sentimiento"] not in ("positivo", "negativo", "neutro", "mixto"):
+        raise ErrorOpiniones("El sentimiento del registro no es válido.")
+    if not 1 <= len(registro["razon"].strip()) <= 300:
+        raise ErrorOpiniones("La razón debe tener entre 1 y 300 caracteres.")
+    return registro
+
+
+def crear_registro(alien: dict, texto: str, analisis: dict, modelo: str, version_prompt: str) -> dict:
+    """Genera identidad y fecha en la aplicación; solo admite análisis pertinentes."""
+    if not isinstance(analisis, dict) or analisis.get("es_pertinente") is not True:
+        raise ErrorOpiniones("Solo se pueden guardar opiniones pertinentes con análisis válido.")
+    registro = {
+        "id": str(uuid4()),
+        "fecha_utc": datetime.now(timezone.utc).isoformat(),
+        "alien_id": alien["id"],
+        "alien_nombre": alien["nombre"],
+        "opinion_original": texto,
+        "sentimiento": analisis.get("sentimiento"),
+        "razon": analisis.get("razon"),
+        "modelo": modelo,
+        "version_prompt": version_prompt,
+    }
+    return _validar_registro(registro)
+
+
+def _ruta_opiniones(ruta: str | Path) -> Path:
+    ruta = Path(ruta)
+    return ruta if ruta.is_absolute() else RAIZ_PROYECTO / ruta
+
+
+def cargar_opiniones(ruta: str | Path = RUTA_OPINIONES) -> list[dict]:
+    """Lee y valida sin modificar archivos. Un archivo ausente representa un archivo vacío."""
+    ruta = _ruta_opiniones(ruta)
+    try:
+        datos = json.loads(ruta.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        return []
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        raise ErrorOpiniones("No se pudo leer el archivo de opiniones. Revisa permisos, UTF-8 y JSON; no se modificó.") from None
+    if (
+        not isinstance(datos, dict) or set(datos) != {"version", "opiniones"}
+        or type(datos["version"]) is not int or datos["version"] != 1
+        or not isinstance(datos["opiniones"], list)
+    ):
+        raise ErrorOpiniones("El archivo de opiniones no cumple el esquema de versión 1; se conserva intacto.")
+    ids = set()
+    for registro in datos["opiniones"]:
+        _validar_registro(registro)
+        if registro["id"] in ids:
+            raise ErrorOpiniones("El archivo de opiniones contiene IDs repetidos; se conserva intacto.")
+        ids.add(registro["id"])
+    return datos["opiniones"]
+
+
+def guardar_opinion(ruta: str | Path, registro: dict) -> bool:
+    """Añade atómicamente. Devuelve False si ya existe el mismo envío idéntico.
+
+    No evita pérdidas por escritores concurrentes: usar solo un escritor local.
+    """
+    _validar_registro(registro)
+    ruta = _ruta_opiniones(ruta)
+    registros = cargar_opiniones(ruta)
+    for existente in registros:
+        if existente["id"] == registro["id"]:
+            if existente != registro:
+                raise ErrorOpiniones("El ID del envío ya existe con otros datos; no se sobrescribió.")
+            return False
+    contenido = json.dumps({"version": 1, "opiniones": [*registros, registro]}, ensure_ascii=False, indent=2)
+    temporal = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w", encoding="utf-8", dir=ruta.parent,
+            prefix=f".{ruta.name}.", suffix=".tmp", delete=False,
+        ) as archivo:
+            temporal = Path(archivo.name)
+            archivo.write(contenido + "\n")
+            archivo.flush()
+            os.fsync(archivo.fileno())
+        os.replace(temporal, ruta)
+    except (OSError, UnicodeError):
+        raise ErrorOpiniones("No se pudo guardar la opinión. Revisa permisos y espacio disponible; puedes reintentar.") from None
+    finally:
+        if temporal is not None:
+            try:
+                temporal.unlink(missing_ok=True)
+            except OSError:
+                pass
+    return True
