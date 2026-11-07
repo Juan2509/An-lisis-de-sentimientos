@@ -1,6 +1,8 @@
 # Archivo Omnitrix — contexto y especificación del proyecto
 
-Última actualización: 6 de noviembre de 2026.
+Última actualización: 7 de noviembre de 2026.
+
+Actualización de esta copia de Windows: el paso 7 está implementado en `app.py`, pendiente de verificación ejecutable. Incluye chat, validación de 5 a 1000 caracteres tras quitar espacios exteriores, conservación del texto original y del alien de cada envío, historial al navegar y Nueva conversación. Los textos inválidos permanecen visibles para corregirlos. No hay llamadas al modelo ni persistencia. Se añadieron tres pruebas de interacción y se actualizó la de inicio; no se ejecutaron porque aquí no existe `.venv` ni se encontró Python en el PATH. `git diff --check` correcto. Los resultados de entorno y pruebas citados a continuación son históricos. Antes de cerrar el paso 7 y avanzar al 8, preparar el entorno y ejecutar las pruebas. El refinamiento visual ya está confirmado en Git en `025bf5d`.
 
 ## 1. Cómo usar este documento al retomar el trabajo
 

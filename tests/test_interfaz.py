@@ -28,7 +28,55 @@ class PruebasInterfaz(unittest.TestCase):
         self.assertEqual(len(app.selectbox[0].options), 20)
         self.assertEqual(app.subheader[0].value, "Fuego")
         self.assertIn("próximas etapas", app.info[0].value)
-        self.assertFalse(app.chat_input)
+        self.assertEqual(len(app.chat_input), 1)
+
+    def test_opiniones_conservan_alien_texto_y_no_se_duplican_al_navegar(self):
+        app = self.iniciar()
+        texto = "  Me encanta su diseño.  "
+        app.chat_input[0].set_value(texto).run()
+        app.selectbox[0].select("a002").run()
+        app.chat_input[0].set_value("Sus cristales son increíbles.").run()
+        app.radio[0].set_value("Consultar archivo").run()
+        app.radio[0].set_value("Analizar opinión").run()
+        self.assertFalse(app.exception)
+        historial = app.session_state["opiniones_sesion"]
+        self.assertEqual(len(historial), 2)
+        self.assertEqual(historial[0], {
+            "alien_id": "a001", "alien_nombre": "Fuego", "opinion_original": texto,
+        })
+        self.assertEqual(historial[1]["alien_id"], "a002")
+        self.assertEqual(len(app.chat_message), 2)
+
+    def test_longitud_se_valida_sin_truncar_y_conserva_texto_rechazado(self):
+        app = self.iniciar()
+        for texto in ("   ", "abcd", "x" * 1001):
+            with self.subTest(longitud=len(texto)):
+                app.chat_input[0].set_value(texto).run()
+                self.assertFalse(app.exception)
+                self.assertTrue(app.error)
+                self.assertEqual(app.session_state["opiniones_sesion"], [])
+                self.assertIn(texto, [elemento.value for elemento in app.text])
+        for texto in ("  abcde  ", "x" * 1000):
+            app.chat_input[0].set_value(texto).run()
+            self.assertFalse(app.error)
+        self.assertEqual(len(app.session_state["opiniones_sesion"]), 2)
+
+    def test_envios_identicos_independientes_y_limpieza_sin_escritura(self):
+        app = self.iniciar()
+        ruta = RAIZ_PROYECTO / "datos/opiniones.json"
+        anterior = ruta.read_bytes() if ruta.exists() else None
+        for _ in range(2):
+            app.chat_input[0].set_value("Me gusta su diseño.").run()
+        self.assertEqual(len(app.session_state["opiniones_sesion"]), 2)
+        app.selectbox[0].select("a003").run()
+        app.chat_input[0].set_value("mal").run()
+        app.button(key="nueva_conversacion").click().run()
+        self.assertFalse(app.exception)
+        self.assertFalse(app.chat_message)
+        self.assertFalse(app.error)
+        self.assertEqual(app.selectbox[0].value, "a003")
+        self.assertEqual(app.session_state["opiniones_sesion"], [])
+        self.assertEqual(ruta.read_bytes() if ruta.exists() else None, anterior)
 
     def test_seleccion_de_todos_los_aliens(self):
         app = self.iniciar()

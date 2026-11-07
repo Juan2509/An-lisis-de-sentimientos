@@ -101,6 +101,8 @@ Las imágenes definitivas no deben bloquear el desarrollo: puede emplearse un re
 
 - [ ] Completado y verificado.
 
+Implementado el 2026-11-07; falta ejecutar las pruebas en esta copia de Windows. `app.py` captura el texto sin truncar, valida su longitud tras `strip`, conserva texto original e identidad del alien y muestra el historial de sesión. Los rechazos quedan visibles; Nueva conversación limpia el chat y conserva la selección. No hay análisis ni escritura. Se añadieron tres pruebas de interacción y se actualizó la de inicio. `git diff --check` correcto. No existe `.venv` y no se encontró Python en el PATH; no se atribuyen resultados de pruebas ejecutables a esta etapa. Antes de cerrar el paso, preparar el entorno y ejecutar la suite.
+
 Contenido: `st.chat_input`, `st.chat_message`, historial en `st.session_state`, asociación del envío con el alien y botón Nueva conversación.
 
 Comprobar: longitud de 5 a 1000 caracteres después de quitar espacios exteriores, sin truncamiento silencioso. Cambiar de alien no modifica envíos anteriores. Limpiar el chat no borra datos persistentes.
@@ -199,6 +201,7 @@ Actualizar al finalizar cada etapa con evidencia breve. No inventar hashes ni re
 
 | Fecha | Etapa | Avance real | Verificación y pendientes | Commit, si existe |
 | --- | --- | --- | --- | --- |
+| 2026-11-07 | Paso 7 | Captura, validación, asociación al alien e historial temporal; limpieza del chat | Revisión del diff correcta; pruebas añadidas pero sin ejecutar por falta de Python y `.venv` en Windows | Pendiente de commit |
 | 2026-11-06 | Planificación | Contexto y plan ya registrados | Historial y estado local inspeccionados; árbol limpio al iniciar | `34b28f7`, `41aeb15` |
 | 2026-11-06 | Refinamiento visual solicitado | Negro predominante, verde neón/degradado y blanco; portada futurista, navegación resaltada y fichas iluminadas | 28 pruebas correctas; Chrome a 1440/390 px sin desbordamiento, navegación e imagen local comprobadas; movimiento reducido desactiva la órbita. Sigue pendiente el paso 7 | Pendiente de commit |
 | 2026-11-06 | Paso 6 | Fichas del catálogo, 20 PNG locales con fuentes y alternativa SVG | 28 pruebas correctas; imágenes verificadas visualmente, hashes y dimensiones registrados, errores de imagen sin bloquear la ficha | `dc3da8c` |

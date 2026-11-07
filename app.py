@@ -59,6 +59,53 @@ def conservar_seleccion():
     st.session_state["alien_id"] = st.session_state["selector_alien"]
 
 
+def mostrar_opiniones(alien: dict):
+    """Captura opiniones independientes y conserva solo el historial de sesión."""
+    historial = st.session_state.setdefault("opiniones_sesion", [])
+    st.subheader("Comparte tu opinión")
+    st.info(
+        "Tus opiniones permanecen solo durante esta sesión. "
+        "El análisis con IA y el guardado estarán disponibles en próximas etapas."
+    )
+    if st.button("Nueva conversación", key="nueva_conversacion"):
+        historial.clear()
+        st.session_state.pop("opinion_rechazada", None)
+
+    texto = st.chat_input(
+        f"Opina sobre {alien['nombre']} (5 a 1000 caracteres)",
+        key="opinion_actual",
+    )
+    if texto is not None:
+        # Validar sin truncar; conservar el texto original para su recuperación.
+        if not 5 <= len(texto.strip()) <= 1000:
+            st.session_state["opinion_rechazada"] = {
+                "alien_nombre": alien["nombre"], "texto": texto,
+            }
+        else:
+            historial.append({
+                "alien_id": alien["id"],
+                "alien_nombre": alien["nombre"],
+                "opinion_original": texto,
+            })
+            st.session_state.pop("opinion_rechazada", None)
+
+    for opinion in historial:
+        with st.chat_message("user"):
+            st.caption(f"Opinión sobre {opinion['alien_nombre']}")
+            st.text(opinion["opinion_original"])
+            st.caption("Pendiente de análisis · Sin guardar en el archivo")
+
+    rechazada = st.session_state.get("opinion_rechazada")
+    if rechazada is not None:
+        st.error(
+            "La opinión debe tener entre 5 y 1000 caracteres después de quitar "
+            "los espacios exteriores. Corrígela y vuelve a enviarla."
+        )
+        with st.chat_message("user"):
+            st.caption(f"Texto no aceptado sobre {rechazada['alien_nombre']}")
+            st.text(rechazada["texto"])
+
+
 def main():
     st.set_page_config(page_title="Archivo Omnitrix", page_icon="🟢", layout="wide")
     estilos = (RAIZ_PROYECTO / "assets" / "estilos.css").read_text(encoding="utf-8")
@@ -78,7 +125,7 @@ def main():
             key="seccion",
         )
         st.divider()
-        st.caption("Versión en desarrollo · Catálogo y fichas disponibles.")
+        st.caption("Versión en desarrollo · Catálogo, fichas y opiniones de sesión.")
 
     st.title("Archivo Omnitrix")
     st.caption("Explora las transformaciones de Ben 10.")
@@ -139,10 +186,7 @@ def main():
 
     mostrar_ficha(alien)
 
-    st.info(
-        "Puedes explorar las fichas de los aliens. "
-        "El envío y análisis de opiniones estarán disponibles en próximas etapas."
-    )
+    mostrar_opiniones(alien)
 
 
 if __name__ == "__main__":

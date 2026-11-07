@@ -4,7 +4,15 @@ Proyecto académico de análisis de opiniones sobre aliens de **Ben 10**, adapta
 
 ## Estado
 
-Pasos 1 a 6 completados: alcance documentado, estructura inicial, catálogo validado de 20 aliens e interfaz Streamlit con navegación, selector y fichas con imágenes locales. El entorno `.venv` y las dependencias están comprobados en este equipo. El envío, el análisis y la persistencia de opiniones siguen pendientes. El siguiente paso es capturar opiniones y mantener su historial visual (paso 7).
+Pasos 1 a 6 completados. El paso 7 está implementado y pendiente de verificación ejecutable en esta copia de Windows: captura de opiniones, validación e historial visual de sesión. Aquí no existe `.venv` ni se encontró Python en el PATH; las comprobaciones de entorno descritas más abajo corresponden al equipo anterior. El análisis y la persistencia siguen pendientes.
+
+## Opiniones de sesión (paso 7)
+
+Debajo de la ficha se puede enviar una opinión de 5 a 1000 caracteres, contando después de quitar espacios exteriores y sin recortar el texto. Cada envío conserva el texto original, ID y nombre del alien seleccionado. El historial permanece al cambiar de alien o sección; dos envíos iguales son independientes. Los textos rechazados quedan visibles para recuperarlos y corregirlos.
+
+«Nueva conversación» limpia el historial y el texto rechazado, conservando la selección. Los mensajes se muestran como pendientes de análisis y sin guardar: todavía no se llama a la IA ni se escribe `datos/opiniones.json`. El historial solo dura durante la sesión de Streamlit.
+
+Se añadieron tres pruebas de interacción para estos flujos y se actualizó la prueba de inicio. `git diff --check` correcto; pruebas Python pendientes de ejecutar con las dependencias instaladas mediante `python -m unittest discover -s tests -v`.
 
 ## Objetivo y experiencia prevista
 
