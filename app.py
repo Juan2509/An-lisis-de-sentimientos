@@ -1,11 +1,12 @@
-"""Navegación, selección y fichas de Archivo Omnitrix."""
+"""Interfaz de catálogo, análisis y consulta del Archivo Omnitrix."""
 
+import json
 import streamlit as st
 from PIL import Image
 
 from almacenamiento import (
     ErrorCatalogo, ErrorOpiniones, RAIZ_PROYECTO, RUTA_OPINIONES,
-    cargar_aliens, crear_registro, guardar_opinion,
+    cargar_aliens, crear_registro, guardar_opinion, cargar_opiniones, consultar_opiniones,
 )
 from analisis import ErrorAnalisis, analizar_opinion
 
@@ -160,6 +161,69 @@ def mostrar_opiniones(alien: dict):
             st.text(rechazada["texto"])
 
 
+def mostrar_archivo():
+    """Consulta el JSON persistente sin cargar el catálogo, escribir ni llamar a la IA."""
+    st.header("Consultar archivo")
+    st.caption(
+        "Explora las opiniones guardadas. Los totales corresponden únicamente "
+        "a este archivo y respetan los filtros seleccionados."
+    )
+    try:
+        registros = cargar_opiniones(RUTA_OPINIONES)
+    except ErrorOpiniones as error:
+        st.error(str(error))
+        return
+
+    # Usar los IDs del archivo permite consultar datos aunque cambie o falle el catálogo.
+    nombres = {registro["alien_id"]: registro["alien_nombre"] for registro in registros}
+    ids = [None, *sorted(nombres, key=lambda identificador: (nombres[identificador].casefold(), identificador))]
+    categorias = ("positivo", "negativo", "neutro", "mixto")
+    if st.session_state.get("filtro_alien") not in ids:
+        st.session_state["filtro_alien"] = None
+    if st.session_state.get("filtro_sentimiento") not in (None, *categorias):
+        st.session_state["filtro_sentimiento"] = None
+    columnas = st.columns(2)
+    with columnas[0]:
+        alien_id = st.selectbox(
+            "Filtrar por alien", options=ids, key="filtro_alien",
+            format_func=lambda valor: "Todos los aliens" if valor is None else f"{nombres[valor]} ({valor})",
+        )
+    with columnas[1]:
+        sentimiento = st.selectbox(
+            "Filtrar por sentimiento", options=(None, *categorias), key="filtro_sentimiento",
+            format_func=lambda valor: "Todos los sentimientos" if valor is None else valor.capitalize(),
+        )
+
+    filtrados = consultar_opiniones(registros, alien_id, sentimiento)
+    columnas = st.columns(5)
+    columnas[0].metric("Total de opiniones", len(filtrados))
+    for columna, categoria in zip(columnas[1:], categorias):
+        columna.metric(categoria.capitalize(), sum(r["sentimiento"] == categoria for r in filtrados))
+
+    if not registros:
+        st.info("Todavía no hay opiniones guardadas. Envía una opinión pertinente en Analizar opinión.")
+    elif not filtrados:
+        st.info("No hay opiniones que coincidan con los filtros seleccionados.")
+    else:
+        # Una única selección alimenta tabla, recuentos y descarga.
+        st.dataframe({
+            "Fecha UTC": [r["fecha_utc"] for r in filtrados],
+            "Alien": [r["alien_nombre"] for r in filtrados],
+            "ID del alien": [r["alien_id"] for r in filtrados],
+            "Opinión original": [r["opinion_original"] for r in filtrados],
+            "Sentimiento": [r["sentimiento"] for r in filtrados],
+            "Razón": [r["razon"] for r in filtrados],
+        }, hide_index=True, width="stretch")
+
+    st.download_button(
+        "Descargar resultados filtrados (JSON)",
+        data=json.dumps({"version": 1, "opiniones": filtrados}, ensure_ascii=False, indent=2).encode("utf-8"),
+        file_name="opiniones_omnitrix_filtradas.json", mime="application/json",
+        key="descargar_opiniones", on_click="ignore",
+    )
+    st.caption("La descarga incluye los registros completos de la selección, con sus IDs y metadatos.")
+
+
 def main():
     st.set_page_config(page_title="Archivo Omnitrix", page_icon="🟢", layout="wide")
     estilos = (RAIZ_PROYECTO / "assets" / "estilos.css").read_text(encoding="utf-8")
@@ -185,11 +249,7 @@ def main():
     st.caption("Explora las transformaciones de Ben 10.")
 
     if seccion == "Consultar archivo":
-        st.header("Consultar archivo")
-        st.info(
-            "La consulta de opiniones estará disponible en una próxima etapa. "
-            "Las opiniones pertinentes ya se guardan; los filtros y la descarga siguen pendientes."
-        )
+        mostrar_archivo()
         return
 
     st.markdown(

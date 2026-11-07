@@ -227,3 +227,19 @@ def guardar_opinion(ruta: str | Path, registro: dict) -> bool:
             except OSError:
                 pass
     return True
+
+
+def consultar_opiniones(
+    registros: list[dict], alien_id: str | None = None, sentimiento: str | None = None,
+) -> list[dict]:
+    """Filtra registros ya validados por ID y categoría, sin E/S ni mutaciones.
+
+    None significa todos. Los dos filtros se combinan con AND y mantienen
+    el orden del archivo; nombres repetidos no mezclan identidades.
+    """
+    if sentimiento is not None and sentimiento not in ("positivo", "negativo", "neutro", "mixto"):
+        raise ErrorOpiniones("El filtro de sentimiento no es válido.")
+    return [dict(registro) for registro in registros if (
+        (alien_id is None or registro["alien_id"] == alien_id)
+        and (sentimiento is None or registro["sentimiento"] == sentimiento)
+    )]

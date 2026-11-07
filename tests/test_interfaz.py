@@ -11,7 +11,10 @@ from unittest.mock import patch
 from PIL import Image
 from streamlit.testing.v1 import AppTest
 
-from almacenamiento import ErrorCatalogo, ErrorOpiniones, RAIZ_PROYECTO, cargar_aliens, cargar_opiniones
+from almacenamiento import (
+    ErrorCatalogo, ErrorOpiniones, RAIZ_PROYECTO, cargar_aliens, cargar_opiniones,
+    crear_registro, guardar_opinion,
+)
 from analisis import ErrorAnalisis
 
 
@@ -213,8 +216,8 @@ class PruebasInterfaz(unittest.TestCase):
         app.radio[0].set_value("Consultar archivo").run()
         self.assertFalse(app.exception)
         self.assertEqual(app.header[0].value, "Consultar archivo")
-        self.assertIn("los filtros y la descarga siguen pendientes", app.info[0].value)
-        self.assertFalse(app.selectbox)
+        self.assertIn("Todavía no hay opiniones", app.info[0].value)
+        self.assertEqual(len(app.selectbox), 2)
         app.radio[0].set_value("Analizar opinión").run()
         self.assertFalse(app.exception)
         self.assertEqual(app.selectbox[0].value, "a020")
@@ -236,6 +239,94 @@ class PruebasInterfaz(unittest.TestCase):
         self.assertFalse(app.exception)
         self.assertFalse(app.error)
         self.assertEqual(app.header[0].value, "Consultar archivo")
+
+    def preparar_archivo(self):
+        registros = []
+        for alien_id, nombre, categoria in (
+            ("a001", "Fuego", "positivo"), ("a001", "Fuego", "negativo"),
+            ("a002", "Diamante", "neutro"), ("a002", "Diamante", "mixto"),
+        ):
+            registro = crear_registro(
+                {"id": alien_id, "nombre": nombre}, "Opinión ficticia para pruebas.",
+                {"es_pertinente": True, "sentimiento": categoria, "razon": "Razón ficticia de prueba."},
+                "modelo-prueba", "prueba",
+            )
+            guardar_opinion(self.ruta_opiniones, registro)
+            registros.append(registro)
+        return registros
+
+    def test_consulta_filtros_tabla_recuentos_y_descarga_coherentes_sin_escribir(self):
+        registros = self.preparar_archivo()
+        anterior = self.ruta_opiniones.read_bytes()
+        app = self.iniciar()
+        with patch("streamlit.download_button", return_value=False) as descargar, patch(
+            "almacenamiento.guardar_opinion", side_effect=AssertionError("La consulta no escribe"),
+        ):
+            app.radio[0].set_value("Consultar archivo").run()
+            for alien_id, sentimiento in ((None, None), ("a001", None), (None, "mixto"),
+                                          ("a002", "mixto"), ("a001", "neutro")):
+                with self.subTest(alien_id=alien_id, sentimiento=sentimiento):
+                    app.selectbox(key="filtro_alien").set_value(alien_id).run()
+                    app.selectbox(key="filtro_sentimiento").set_value(sentimiento).run()
+                    self.assertFalse(app.exception)
+                    esperados = [r for r in registros if (
+                        (alien_id is None or r["alien_id"] == alien_id)
+                        and (sentimiento is None or r["sentimiento"] == sentimiento)
+                    )]
+                    self.assertEqual(int(app.metric[0].value), len(esperados))
+                    for indice, categoria in enumerate(("positivo", "negativo", "neutro", "mixto"), 1):
+                        self.assertEqual(int(app.metric[indice].value), sum(r["sentimiento"] == categoria for r in esperados))
+                    exportado = json.loads(descargar.call_args.kwargs["data"].decode("utf-8"))
+                    self.assertEqual(exportado, {"version": 1, "opiniones": esperados})
+                    self.assertEqual(descargar.call_args.kwargs["on_click"], "ignore")
+                    if esperados:
+                        tabla = app.dataframe[0].value
+                        self.assertEqual(tabla["ID del alien"].tolist(), [r["alien_id"] for r in esperados])
+                        self.assertEqual(tabla["Sentimiento"].tolist(), [r["sentimiento"] for r in esperados])
+                        self.assertEqual(tabla["Opinión original"].tolist(), [r["opinion_original"] for r in esperados])
+                    else:
+                        self.assertFalse(app.dataframe)
+                        self.assertIn("coincidan con los filtros", app.info[0].value)
+        self.analizar.assert_not_called()
+        self.assertEqual(self.ruta_opiniones.read_bytes(), anterior)
+
+    def test_consulta_vacia_no_crea_archivo_y_exporta_lista_vacia(self):
+        app = self.iniciar()
+        with patch("streamlit.download_button", return_value=False) as descargar:
+            app.radio[0].set_value("Consultar archivo").run()
+        self.assertFalse(app.exception)
+        self.assertEqual(int(app.metric[0].value), 0)
+        self.assertFalse(app.dataframe)
+        self.assertIn("Todavía no hay opiniones", app.info[0].value)
+        self.assertEqual(json.loads(descargar.call_args.kwargs["data"]), {"version": 1, "opiniones": []})
+        self.assertFalse(self.ruta_opiniones.exists())
+        self.analizar.assert_not_called()
+
+    def test_consulta_archivo_danado_muestra_error_sin_tabla_ni_descarga(self):
+        contenido = b'{"version": 1, "opiniones": ['
+        self.ruta_opiniones.write_bytes(contenido)
+        app = self.iniciar()
+        with patch("streamlit.download_button") as descargar:
+            app.radio[0].set_value("Consultar archivo").run()
+            descargar.assert_not_called()
+        self.assertFalse(app.exception)
+        self.assertTrue(app.error)
+        self.assertFalse(app.metric)
+        self.assertFalse(app.dataframe)
+        self.assertEqual(self.ruta_opiniones.read_bytes(), contenido)
+        self.analizar.assert_not_called()
+
+    def test_consulta_actualiza_datos_y_restablece_filtro_si_desaparece_alien(self):
+        self.preparar_archivo()
+        app = self.iniciar()
+        app.radio[0].set_value("Consultar archivo").run()
+        app.selectbox(key="filtro_alien").set_value("a001").run()
+        self.ruta_opiniones.write_text('{"version": 1, "opiniones": []}', encoding="utf-8")
+        app.run()
+        self.assertFalse(app.exception)
+        self.assertIsNone(app.selectbox(key="filtro_alien").value)
+        self.assertEqual(int(app.metric[0].value), 0)
+        self.analizar.assert_not_called()
 
 
 if __name__ == "__main__":

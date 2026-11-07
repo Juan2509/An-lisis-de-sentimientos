@@ -4,7 +4,7 @@ Proyecto académico de análisis de opiniones sobre aliens de **Ben 10**, adapta
 
 ## Estado
 
-Pasos 1 a 6 completados. Los pasos 7, 8 y 9 están implementados y pendientes de verificación ejecutable en esta copia de Windows: captura, clasificación y persistencia de opiniones. Aquí no existe `.venv` ni se encontró Python en el PATH; las comprobaciones de entorno descritas más abajo corresponden al equipo anterior. La consulta visual, filtros y exportación corresponden al paso 10.
+Pasos 1 a 6 completados. Los pasos 7 a 10 están implementados y pendientes de verificación ejecutable en esta copia de Windows: captura, clasificación, persistencia, consulta y exportación de opiniones. Aquí no existe `.venv` ni se encontró Python en el PATH; las comprobaciones de entorno descritas más abajo corresponden al equipo anterior. El siguiente desarrollo es el inicio gráfico (paso 11).
 
 ## Opiniones de sesión (paso 7)
 
@@ -34,9 +34,21 @@ Las rutas relativas parten del proyecto. Leer un archivo ausente devuelve una li
 
 La escritura UTF-8 mantiene los acentos y utiliza un temporal en el mismo directorio, `flush`, `fsync` y reemplazo final. Un fallo intenta limpiar el temporal y mantiene la opinión disponible en sesión. El alcance es un único escritor local: el reemplazo atómico no resuelve actualizaciones concurrentes.
 
-La interfaz confirma «Opinión guardada en el Archivo Omnitrix» solo después de un guardado exitoso o de comprobar que el mismo registro ya existe. Si falla, «Reintentar guardado» reutiliza UUID, fecha y análisis, sin consumir API. Un ID existente con datos distintos se rechaza; dos envíos independientes con el mismo texto conservan IDs distintos. Cambiar de alien o sección no dispara escrituras. Limpiar el chat no modifica el JSON. El historial no se reconstruye desde disco; la consulta visual se incorporará en el paso 10.
+La interfaz confirma «Opinión guardada en el Archivo Omnitrix» solo después de un guardado exitoso o de comprobar que el mismo registro ya existe. Si falla, «Reintentar guardado» reutiliza UUID, fecha y análisis, sin consumir API. Un ID existente con datos distintos se rechaza; dos envíos independientes con el mismo texto conservan IDs distintos. Cambiar de alien o sección no dispara escrituras. Limpiar el chat no modifica el JSON. El chat no se reconstruye desde disco; los registros persistentes se consultan en Consultar archivo.
 
 Verificación: siete pruebas nuevas de almacenamiento con archivos temporales y una nueva de interfaz para fallo/reintento; las pruebas de interfaz aíslan la ruta para no modificar el archivo real. Cubren lectura posterior, duplicados, conflictos, JSON/UTF-8 inválidos, fallos de escritura y reemplazo, limpieza y rechazos. No ejecutadas por ausencia de Python y `.venv`. `git diff --check` correcto. Para comprobar solo la persistencia basta Python estándar: `python -m unittest discover -s tests -p test_opiniones.py -v`; la suite completa requiere instalar `requirements.txt`. La prueba de reinicio real de la aplicación sigue pendiente.
+
+## Consulta y exportación (paso 10)
+
+En **Consultar archivo**, seleccionar un alien y/o un sentimiento, o dejar «Todos». El selector de aliens se construye a partir de los registros guardados e incluye el ID para distinguir nombres repetidos. Se puede consultar el archivo aunque el catálogo de aliens falle o cambie. Los nombres y textos de la tabla son los conservados al guardar cada envío.
+
+`consultar_opiniones` combina ambos filtros con AND, conserva el orden del archivo y devuelve copias de los registros sin modificar los originales. La interfaz usa exactamente esa lista para el total, los cuatro recuentos, la tabla y la descarga. La tabla muestra fecha UTC, alien/ID, opinión original, sentimiento y razón; los recuentos solo describen los registros de esta aplicación.
+
+«Descargar resultados filtrados (JSON)» genera UTF-8 con `version: 1` y los registros completos de la selección, incluyendo UUID y metadatos. El botón usa `on_click="ignore"` para no provocar una reejecución al descargar. Si el archivo está vacío o los filtros no encuentran coincidencias, se muestra un aviso, total y categorías en cero y se permite descargar una lista vacía. Un archivo dañado produce un error y no muestra tabla, métricas ni descarga de datos incompletos.
+
+Consultar, filtrar y descargar no llaman al modelo ni escriben el archivo. Las opiniones se leen de nuevo en cada ejecución, sin caché. Si el ID filtrado desaparece del archivo, el selector vuelve a «Todos».
+
+Verificación: tres pruebas nuevas de filtros puros y cuatro de interfaz para coherencia entre tabla/recuentos/exportación, lectura sin escritura ni IA, estado vacío, archivo dañado y actualización de opciones. No se ejecutaron por ausencia de Python y `.venv`; `git diff --check` correcto. Para ejecutar los filtros basta Python estándar: `python -m unittest discover -s tests -p test_consultas.py -v`. La revisión visual y descarga desde el navegador quedan pendientes junto a la suite completa. Referencias de los componentes: [tabla de Streamlit](https://docs.streamlit.io/develop/concepts/design/dataframes) y [botón de descarga](https://docs.streamlit.io/1.57.0/develop/api-reference/widgets/st.download_button).
 
 ## Objetivo y experiencia prevista
 

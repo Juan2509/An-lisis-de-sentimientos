@@ -2,7 +2,7 @@
 
 ## Cómo retomar en una nueva sesión
 
-Estado más reciente (2026-11-07, Windows): pasos 7 a 9 implementados, pendientes de verificación ejecutable por ausencia de Python y `.venv`. El paso 9 añade persistencia y reintento de guardado sin repetir análisis. La consulta visual corresponde al paso 10. Las comprobaciones y estados del 2026-11-06 que aparecen más abajo son históricos; no equivalen a pruebas de estas nuevas etapas.
+Estado más reciente (2026-11-07, Windows): pasos 7 a 10 implementados, pendientes de verificación ejecutable por ausencia de Python y `.venv`. El paso 10 añade consulta, filtros, tabla, recuentos y exportación coherente. El siguiente desarrollo es el inicio gráfico (11). Las comprobaciones y estados del 2026-11-06 que aparecen más abajo son históricos; no equivalen a pruebas de estas nuevas etapas.
 
 1. Leer `CONTEXTO_PROYECTO.md` para conocer el alcance, la temática de Ben 10, las reglas del taller y las decisiones del usuario.
 2. Leer este plan y revisar los archivos, el historial Git y los cambios sin confirmar. El historial y el código determinan qué está terminado; las casillas son una ayuda.
@@ -145,6 +145,8 @@ Alcance: un único escritor local; no afirmar soporte concurrente por utilizar r
 
 - [ ] Completado y verificado.
 
+Implementado el 2026-11-07; pendiente de suite y revisión en navegador. Función pura `consultar_opiniones`, filtros por ID del alien y categoría o todos; tabla, total y recuentos alimentados por la misma selección que el JSON descargable. Se consulta solo el archivo persistente, sin depender del catálogo, llamar al modelo ni escribir. Estados vacío/sin coincidencias y error de archivo visibles; descarga vacía permitida. Si desaparece un alien filtrado, vuelve a Todos. Tres pruebas de filtros y cuatro de interfaz añadidas; no ejecutadas porque faltan Python y `.venv`. `git diff --check` correcto. No cerrar esta casilla hasta verificar la suite y la descarga real desde el navegador.
+
 Contenido: filtros por alien/sentimiento o todos, tabla, total, recuentos y descarga JSON.
 
 Comprobar: todos los resultados respetan los mismos filtros; estado vacío informativo; consultas sin llamadas al modelo; reejecuciones sin duplicación de registros.
@@ -207,6 +209,7 @@ Actualizar al finalizar cada etapa con evidencia breve. No inventar hashes ni re
 
 | Fecha | Etapa | Avance real | Verificación y pendientes | Commit, si existe |
 | --- | --- | --- | --- | --- |
+| 2026-11-07 | Paso 10 | Consulta visual, filtros combinados, tabla/recuentos y descarga de la misma selección | Diff correcto; siete pruebas nuevas sin ejecutar por falta de Python; revisión de navegador pendiente | Pendiente de commit |
 | 2026-11-07 | Paso 9 | Registros persistentes, validación JSON, escritura atómica y reintento del mismo envío | Revisión del diff correcta; ocho pruebas añadidas sin ejecutar por falta de Python; reinicio real pendiente | Pendiente de commit |
 | 2026-11-07 | Paso 8 | Clasificación estructurada, pertinencia, resultados y errores visibles; metadatos en sesión | Pruebas locales añadidas sin ejecutar; evaluación con API y configuración pendientes; no persiste opiniones | Pendiente de commit |
 | 2026-11-07 | Paso 7 | Captura, validación, asociación al alien e historial temporal; limpieza del chat | Revisión del diff correcta; pruebas añadidas pero sin ejecutar por falta de Python y `.venv` en Windows | Pendiente de commit |
