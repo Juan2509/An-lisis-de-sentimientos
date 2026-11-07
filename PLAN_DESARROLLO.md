@@ -2,7 +2,7 @@
 
 ## Cómo retomar en una nueva sesión
 
-Estado más reciente (2026-11-07, Windows): pasos 7 a 10 implementados, pendientes de verificación ejecutable por ausencia de Python y `.venv`. El paso 10 añade consulta, filtros, tabla, recuentos y exportación coherente. El siguiente desarrollo es el inicio gráfico (11). Las comprobaciones y estados del 2026-11-06 que aparecen más abajo son históricos; no equivalen a pruebas de estas nuevas etapas.
+Estado más reciente (2026-11-07, Windows): pasos 7 a 11 implementados, pendientes de verificación completa por ausencia de Python y `.venv`. El paso 11 añade VBS de doble clic y controlador gráfico con inicio/cierre del servidor. Diagnóstico VBS comprobado, incluida prueba con archivos simulados en carpeta con espacios. Siguiente: preparar el entorno, datos y aceptación (12). Las comprobaciones y estados del 2026-11-06 que aparecen más abajo son históricos; no equivalen a pruebas de estas nuevas etapas.
 
 1. Leer `CONTEXTO_PROYECTO.md` para conocer el alcance, la temática de Ben 10, las reglas del taller y las decisiones del usuario.
 2. Leer este plan y revisar los archivos, el historial Git y los cambios sin confirmar. El historial y el código determinan qué está terminado; las casillas son una ayuda.
@@ -157,6 +157,8 @@ Commit: `feat(consultas): filtrar y exportar opiniones registradas`
 
 - [ ] Completado y verificado.
 
+Implementado el 2026-11-07 para Windows: `Iniciar Archivo Omnitrix.vbs` e `iniciar.py`. Usa únicamente `.venv\Scripts\python.exe`, rutas absolutas y cwd del proyecto, comprueba dependencias, inicia Streamlit oculto en loopback con puerto disponible y espera su salud antes de abrir el navegador. Ventana con Abrir y Detener/cerrar; cierre limitado al proceso propio. Mutex por carpeta/sesión de Windows impide lanzadores duplicados. Errores visibles y `inicio.log` ignorado. El VBS se diagnosticó desde otra carpeta: entorno ausente detectado. La prueba PowerShell pasó para archivos ausentes y presentes simulados en ruta con espacios, sin ejecutar Python ni GUI. Cinco pruebas Python añadidas sin ejecutar; falta preparar el entorno y comprobar navegador, segunda instancia y cierre reales antes de marcar la casilla. `git diff --check` correcto. No se asegura portabilidad a otros sistemas.
+
 Contenido: acceso directo o mecanismo gráfico adecuado al sistema de destino, con instrucciones claras.
 
 Comprobar: abre la aplicación en el navegador sin escribir comandos, utiliza el entorno correcto y resuelve rutas desde el proyecto. No prometer que el mismo lanzador funciona en todos los sistemas sin comprobarlo.
@@ -209,6 +211,7 @@ Actualizar al finalizar cada etapa con evidencia breve. No inventar hashes ni re
 
 | Fecha | Etapa | Avance real | Verificación y pendientes | Commit, si existe |
 | --- | --- | --- | --- | --- |
+| 2026-11-07 | Paso 11 | Inicio por doble clic y ventana de control para Windows, proceso local y exclusión de duplicados | Diagnóstico VBS y prueba PowerShell correctos; Python, GUI, servidor y cierre reales pendientes | Pendiente de commit |
 | 2026-11-07 | Paso 10 | Consulta visual, filtros combinados, tabla/recuentos y descarga de la misma selección | Diff correcto; siete pruebas nuevas sin ejecutar por falta de Python; revisión de navegador pendiente | Pendiente de commit |
 | 2026-11-07 | Paso 9 | Registros persistentes, validación JSON, escritura atómica y reintento del mismo envío | Revisión del diff correcta; ocho pruebas añadidas sin ejecutar por falta de Python; reinicio real pendiente | Pendiente de commit |
 | 2026-11-07 | Paso 8 | Clasificación estructurada, pertinencia, resultados y errores visibles; metadatos en sesión | Pruebas locales añadidas sin ejecutar; evaluación con API y configuración pendientes; no persiste opiniones | Pendiente de commit |

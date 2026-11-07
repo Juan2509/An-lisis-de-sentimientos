@@ -4,7 +4,7 @@ Proyecto académico de análisis de opiniones sobre aliens de **Ben 10**, adapta
 
 ## Estado
 
-Pasos 1 a 6 completados. Los pasos 7 a 10 están implementados y pendientes de verificación ejecutable en esta copia de Windows: captura, clasificación, persistencia, consulta y exportación de opiniones. Aquí no existe `.venv` ni se encontró Python en el PATH; las comprobaciones de entorno descritas más abajo corresponden al equipo anterior. El siguiente desarrollo es el inicio gráfico (paso 11).
+Pasos 1 a 6 completados. Los pasos 7 a 11 están implementados y pendientes de verificación completa en esta copia de Windows: captura, clasificación, persistencia, consulta, exportación e inicio gráfico. Aquí no existe `.venv` ni se encontró Python en el PATH; las comprobaciones de entorno descritas más abajo corresponden al equipo anterior. El diagnóstico del lanzador VBS sí se ejecutó. El siguiente paso es preparar datos y verificar la aceptación (12), resolviendo primero el entorno pendiente.
 
 ## Opiniones de sesión (paso 7)
 
@@ -49,6 +49,31 @@ En **Consultar archivo**, seleccionar un alien y/o un sentimiento, o dejar «Tod
 Consultar, filtrar y descargar no llaman al modelo ni escriben el archivo. Las opiniones se leen de nuevo en cada ejecución, sin caché. Si el ID filtrado desaparece del archivo, el selector vuelve a «Todos».
 
 Verificación: tres pruebas nuevas de filtros puros y cuatro de interfaz para coherencia entre tabla/recuentos/exportación, lectura sin escritura ni IA, estado vacío, archivo dañado y actualización de opciones. No se ejecutaron por ausencia de Python y `.venv`; `git diff --check` correcto. Para ejecutar los filtros basta Python estándar: `python -m unittest discover -s tests -p test_consultas.py -v`. La revisión visual y descarga desde el navegador quedan pendientes junto a la suite completa. Referencias de los componentes: [tabla de Streamlit](https://docs.streamlit.io/develop/concepts/design/dataframes) y [botón de descarga](https://docs.streamlit.io/1.57.0/develop/api-reference/widgets/st.download_button).
+
+## Inicio gráfico en Windows (paso 11)
+
+Con el entorno preparado, abrir **Iniciar Archivo Omnitrix.vbs** con doble clic. Aparece una ventana de control que comprueba las dependencias, inicia Streamlit en una dirección local `127.0.0.1` con puerto disponible y abre el navegador al responder el servidor. No es necesario escribir comandos para utilizar la aplicación.
+
+- **Abrir en navegador** permite volver a la aplicación si se cierra su pestaña.
+- **Detener y cerrar**, o cerrar la ventana de control, detiene el proceso creado por el lanzador. Cerrar solo el navegador deja el servidor activo.
+- Una segunda apertura de la misma carpeta, en la misma sesión de Windows, muestra un aviso en lugar de crear otro servidor.
+- Las rutas y el directorio de trabajo se resuelven desde el proyecto; así se carga también `.streamlit/config.toml`. No se utiliza un Python global como alternativa silenciosa.
+
+El VBS requiere Windows Script Host habilitado; `iniciar.py` requiere el Python de Windows en `.venv\Scripts\python.exe`, con Tkinter y las dependencias de `requirements.txt`. El servidor y su comprobación de dependencias se ejecutan sin consola visible. Los errores se informan con ventanas y el servidor escribe su diagnóstico en `inicio.log`, que está excluido de Git y se renueva en cada inicio. Las esperas máximas son 30 segundos para importar dependencias y 45 segundos para que responda el servidor.
+
+**Preparación técnica del equipo, una sola vez:** disponer de Python para Windows 3.10 o superior con Tkinter, crear un entorno nuevo e instalar las dependencias. No copiar el `.venv` de Linux. Desde PowerShell en la raíz del proyecto:
+
+```powershell
+py -3 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m pip check
+```
+
+Estos comandos son para preparar el entorno de desarrollo/entrega; el usuario abre después el archivo VBS. No se instalan paquetes automáticamente al abrir la aplicación. Para analizar opiniones también hace falta configurar `.env`; el catálogo y la consulta no necesitan credenciales de IA. El lanzador es específico de Windows; no se afirma compatibilidad con Linux o macOS.
+
+**Verificación realizada:** `cscript.exe //nologo "Iniciar Archivo Omnitrix.vbs" /comprobar`, desde otra carpeta, detectó correctamente que falta `.venv\Scripts\python.exe`. Además, `tests/comprobar_inicio_windows.ps1` comprobó con éxito los casos de archivos ausentes y presentes en una carpeta temporal con espacios. Los archivos presentes de esa prueba eran simulados: no se ejecutó Python ni se abrieron ventanas. Para repetir esa prueba: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests\comprobar_inicio_windows.ps1` (la política se aplica solo a ese proceso de prueba).
+
+Cinco pruebas Python del comando, salud del servidor y cierre del proceso están en `tests/test_inicio.py`; siguen sin ejecutar por ausencia de intérprete. `git diff --check` correcto. Quedan pendientes la apertura real de Streamlit y navegador, la exclusión de una segunda instancia y la detención desde la ventana con un entorno preparado.
 
 ## Objetivo y experiencia prevista
 
